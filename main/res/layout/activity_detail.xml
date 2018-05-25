@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/phoneTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="22dp"
+        android:gravity="center"
+        android:text="Phone name here"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <ImageView
+        android:id="@+id/phoneImageView"
+        android:layout_width="90dp"
+        android:layout_height="70dp"
+        android:layout_below="@+id/phoneTextView"
+        android:layout_centerHorizontal="true" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="317dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/phoneImageView"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/colorAccent"
+        android:text="Pelaajat muodostavat ryhmien iskuvoiman, ilman taistelijoiden panosta pelistä ei tule mitään. Pelaajat ovat niitä jotka ottavat yhteen vastustajien kanssa viimeiseen kuulaan ja hikipisaraan saakka. Pelajaana pääset suoraan etulinjan toimintaan Suomen suurimmassa paintball-pelissä. Pelaajat toimivat kentällä noin 20 hlö ryhmissä, joita johtaa ryhmänjohtaja. Jokaisessa ryhmässä on lisäksi PST-pelaaja ja lääkintämies.
+Pelaajien tehtävä on hankkia pisteitä omalla joukkueella ja estää vastustajia saamasta pisteitä. Käytännössä tämä tapahtuu joko itse hyökkäämällä tai jotain kohdetta puolustamalla. Pelaajat suojaavat myös erikoisrooleissa toimivia pelaajia. Mikäli joukkueen käytössä on ajoneuvoja, pelaajat ovat niitä pelaajia jotka pääsevät näihin ampujiksi.
+Pelaajana pelaaminen on paintballia parhaimmillaan ja siinä pääsee keskittymään oleelliseen: vastustajien ampumiseen ja hauskanpitämiseen!" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:onClick="backButtonPressed"
+        android:text="Back" />
+
+</RelativeLayout>
