@@ -21,7 +21,11 @@
       ],
       "api_key": [
         {
+<<<<<<< HEAD
           "current_key": "areYouChanging"
+=======
+          "current_key": "nn"
+>>>>>>> 0bbcdf30cce31ea98ca4b6143a764954702365b8
         }
       ],
       "services": {
