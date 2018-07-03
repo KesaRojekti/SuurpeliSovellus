@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "654290473334",
+    "firebase_url": "https://suurpelisovellus.firebaseio.com",
+    "project_id": "suurpelisovellus",
+    "storage_bucket": "suurpelisovellus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:654290473334:android:894f1ae7704ae3f8",
+        "android_client_info": {
+          "package_name": "fi.samuliraty.suurpeli.suurpelifirebase"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "654290473334-v9v2ccka0geeefvajdrmjohvvti8baup.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBQD2ZO98-9ilEwT4FVZurv_-pte8CPnVA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
