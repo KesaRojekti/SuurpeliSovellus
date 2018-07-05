@@ -28,11 +28,7 @@ private const val ARG_PARAM1 = "param1"
 private const val ARG_PARAM2 = "param2"
 
 /**
- * A simple [Fragment] subclass.
- * Activities that contain this fragment must implement the
- * [LeftFragment.OnFragmentInteractionListener] interface
- * to handle interaction events.
- *
+ * Timer related stuff
  */
 class LeftFragment : Fragment() {
 

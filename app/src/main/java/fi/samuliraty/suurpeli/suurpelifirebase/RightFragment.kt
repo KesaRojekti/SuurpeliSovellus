@@ -11,7 +11,7 @@ import android.view.ViewGroup
 
 
 /**
- * A simple [Fragment] subclass.
+ * Rule related stuff
  *
  */
 class RightFragment : Fragment() {
