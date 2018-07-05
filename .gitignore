@@ -10,3 +10,4 @@
 .externalNativeBuild
 *.json
 
+.idea/caches/build_file_checksums.ser
