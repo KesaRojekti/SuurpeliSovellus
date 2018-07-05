@@ -10,6 +10,7 @@ import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.os.Bundle
+import android.support.constraint.Placeholder
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -26,7 +27,6 @@ import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.fragment_main.view.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -84,15 +84,18 @@ class MainActivity : AppCompatActivity() {
         val database = FirebaseDatabase.getInstance()
         //getReference = taulun nimi
         val myRef = database.getReference("message")
+        val timerValue = database.getReference("targetTime")
 
         //write text into the database
-        fab.setOnClickListener { _ ->
+        changeTextButton.setOnClickListener { _ ->
             myRef.setValue("hello")
         }
 
         //write different text into the database
-        fab2.setOnClickListener { _ ->
+        timerButton.setOnClickListener { _ ->
             myRef.setValue("world")
+            //current time +90 mins
+            timerValue.setValue(System.currentTimeMillis()+5400000)
         }
 
         //actually just logs out atm
@@ -166,11 +169,12 @@ class MainActivity : AppCompatActivity() {
         override fun getItem(position: Int): Fragment {
             // getItem is called to instantiate the fragment for the given page.
             // Return a PlaceholderFragment (defined as a static inner class below).
-            if (position == 1) {
-                return JokuFragment()
-            } else {
-                return PlaceholderFragment.newInstance(position + 1)
+            when (position){
+                0 -> return LeftFragment()
+                1 -> return MiddleFragment()
+                else -> return RightFragment()
             }
+            //return PlaceholderFragment.newInstance(position)
 
         }
 
@@ -178,45 +182,10 @@ class MainActivity : AppCompatActivity() {
             // Show 3 total pages.
             return 3
         }
+
+
     }
 
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-    class PlaceholderFragment : Fragment() {
 
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
-                                  savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_main, container, false)
-            rootView.section_label.text = getString(R.string.section_format, arguments?.getInt(ARG_SECTION_NUMBER))
-            return rootView
-        }
 
-        companion object {
-            /**
-             * The fragment argument representing the section number for this
-             * fragment.
-             */
-            private val ARG_SECTION_NUMBER = "section_number"
-
-            /**
-             * Returns a new instance of this fragment for the given section
-             * number.
-             */
-            fun newInstance(sectionNumber: Int): PlaceholderFragment {
-                val fragment = PlaceholderFragment()
-                val args = Bundle()
-                args.putInt(ARG_SECTION_NUMBER, sectionNumber)
-                fragment.arguments = args
-                return fragment
-            }
-        }
-    }
-
-    class JokuFragment : Fragment() {
-        override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-            val rootView = inflater.inflate(R.layout.fragment_test, container, false)
-            return rootView
-        }
-    }
 }
