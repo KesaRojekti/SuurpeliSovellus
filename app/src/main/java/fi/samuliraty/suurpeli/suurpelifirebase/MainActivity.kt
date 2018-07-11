@@ -1,5 +1,7 @@
 package fi.samuliraty.suurpeli.suurpelifirebase
 
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.support.design.widget.TabLayout
 import android.support.design.widget.Snackbar
@@ -11,6 +13,7 @@ import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.view.ViewPager
 import android.os.Bundle
 import android.support.constraint.Placeholder
+import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -44,6 +47,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
 
 
         //get current user

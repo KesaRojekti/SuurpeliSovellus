@@ -1,10 +1,16 @@
 package fi.samuliraty.suurpeli.suurpelifirebase
 
+import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v4.app.NotificationCompat
+import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,7 +42,16 @@ class LeftFragment : Fragment() {
     val database = FirebaseDatabase.getInstance()
     val timerValue = database.getReference("targetTime")
     var timeLeft: Long = 0
+    var testTime: Int = 5
+    //while active handler
     val mHandler: Handler = Handler()
+    //while paused handler
+    val pHandler: Handler = Handler()
+    //create a field for notification manager
+    private var jManager: NotificationManager? = null
+
+    //create a field for the notification
+    private var jBuilder: NotificationCompat.Builder? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -46,6 +61,10 @@ class LeftFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        //cancel notification when app is active
+        jManager?.cancel(1)
+        pHandler.removeCallbacks(updatePaused)
 
         //create and add listener for timer value in the database
         val valueListener = object :  ValueEventListener {
@@ -63,7 +82,20 @@ class LeftFragment : Fragment() {
         }
         timerValue.addValueEventListener(valueListener)
         updateTimer.run()
-
+        /*
+        //build the notification
+        jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "notify_001")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle("Game time remaining:")
+                .setContentText("" + increment)
+                //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
+                .setPriority(1)
+                //1 should be PUBLIC == show all the things in lock screen
+                .setVisibility(1)
+                .setOnlyAlertOnce(true)
+                //should dismiss notification when user clicks/taps on it
+                .setAutoCancel(true)
+                */
     }
 
     //Create a runnable for updating the timer on screen
@@ -71,21 +103,73 @@ class LeftFragment : Fragment() {
         override fun run() {
             timeLeft--
 
+            //if timer reaches 0 stop updating and update text
             if(timeLeft < 0){
                 timerValueText.text = "no game"
+                mHandler.removeCallbacks(this)
             }
             else
             {
                 timerValueText.text = timeLeft.toString()
             }
-
             mHandler.postDelayed(this, 1000)
         }
     }
 
+    //create a runnable for updating the timer when app is not active
+    private val updatePaused: Runnable = object: Runnable {
+        override fun run() {
+            val delayMS: Long = 5000
+            timeLeft -= delayMS/1000
+            pHandler.postDelayed(this, delayMS)
+            //update the contentText of the notification!!
+            jBuilder?.setContentText("" + timeLeft)
+
+            //if timer reaches 0 stop updating and dismiss notification
+            if(timeLeft <= 0){
+                jManager?.cancel(1)
+                pHandler.removeCallbacks(this)
+            }
+            //push notification
+            jManager?.notify(1, jBuilder?.build())
+        }
+    }
+
+
     override fun onPause() {
         super.onPause()
+        //stop refreshing timer
         mHandler.removeCallbacks(updateTimer)
+        updatePaused.run()
+        //create notification manager
+        jManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        //create a notification
+        jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "notify_001")
+                .setSmallIcon(android.R.drawable.ic_dialog_info)
+                .setContentTitle("Game time remaining:")
+                .setContentText("" + timeLeft)
+                //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
+                .setPriority(1)
+                //1 should be PUBLIC == show all the things in lock screen
+                .setVisibility(1)
+                .setOnlyAlertOnce(true)
+                //should dismiss notification when user clicks/taps on it
+                .setAutoCancel(true)
+
+        //create notification channel if using android oreo or higher
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
+
+            val channel: NotificationChannel = NotificationChannel("default", "jotain", NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "channel desc"
+            jManager?.createNotificationChannel(channel)
+        }
+        //push the notification
+        jManager?.notify(1, jBuilder?.build())
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        jManager?.cancel(1)
     }
 
 
