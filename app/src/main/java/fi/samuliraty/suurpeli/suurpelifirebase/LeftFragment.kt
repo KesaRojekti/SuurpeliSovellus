@@ -165,6 +165,10 @@ class LeftFragment : Fragment() {
 
     override fun onDestroy() {
         super.onDestroy()
+        //remove all callbacks
+        pHandler.removeCallbacks(updatePaused)
+        mHandler.removeCallbacks(updateTimer)
+        //dismiss timer notification
         jManager?.cancel(1)
     }
 

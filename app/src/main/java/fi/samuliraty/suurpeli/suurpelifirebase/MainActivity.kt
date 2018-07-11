@@ -60,6 +60,7 @@ class MainActivity : AppCompatActivity() {
                 val usr = fbauth.currentUser
                 if (usr == null){
                     val loginIntent: Intent = Intent(this@MainActivity, SigninActivity::class.java)
+                    loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(loginIntent)
                     finish()
                 }
