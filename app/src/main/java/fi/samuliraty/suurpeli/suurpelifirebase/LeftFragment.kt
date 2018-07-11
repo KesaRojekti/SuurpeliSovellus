@@ -23,6 +23,7 @@ import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_left.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.schedule
 import kotlin.concurrent.timerTask
@@ -70,7 +71,7 @@ class LeftFragment : Fragment() {
             val time = (timer as Long).toLong()
             timeLeft = time - System.currentTimeMillis()
             timeLeft /= 1000
-            timerValueText.text = timeLeft.toString()
+            timerValueText.text = convertTime(timeLeft)
         }
     }
 
@@ -84,20 +85,7 @@ class LeftFragment : Fragment() {
         //add listener for database value changes (also get the data for the first time)
         timerValue.addValueEventListener(valueListener)
         updateTimer.run()
-        /*
-        //build the notification
-        jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "notify_001")
-                .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("Game time remaining:")
-                .setContentText("" + increment)
-                //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
-                .setPriority(1)
-                //1 should be PUBLIC == show all the things in lock screen
-                .setVisibility(1)
-                .setOnlyAlertOnce(true)
-                //should dismiss notification when user clicks/taps on it
-                .setAutoCancel(true)
-                */
+
     }
 
     //Create a runnable for updating the timer on screen
@@ -112,7 +100,7 @@ class LeftFragment : Fragment() {
             }
             else
             {
-                timerValueText.text = timeLeft.toString()
+                timerValueText.text = convertTime(timeLeft)
             }
             mHandler.postDelayed(this, 1000)
         }
@@ -121,11 +109,11 @@ class LeftFragment : Fragment() {
     //create a runnable for updating the timer when app is not active
     private val updatePaused: Runnable = object: Runnable {
         override fun run() {
-            val delayMS: Long = 5000
+            val delayMS: Long = 1000
             timeLeft -= delayMS/1000
             pHandler.postDelayed(this, delayMS)
             //update the contentText of the notification!!
-            jBuilder?.setContentText("" + timeLeft)
+            jBuilder?.setContentText(convertTime(timeLeft))
 
             //if timer reaches 0 stop updating and dismiss notification
             if(timeLeft <= 0){
@@ -144,21 +132,27 @@ class LeftFragment : Fragment() {
         mHandler.removeCallbacks(updateTimer)
         //remove value listener so we don't crash the app if it changes while paused
         timerValue.removeEventListener(valueListener)
-        updatePaused.run()
+
+        //start pushing notification if necessary
+        if(timeLeft > 0){
+            updatePaused.run()
+        }
         //create notification manager
         jManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
         //create a notification
         jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "notify_001")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("Game time remaining:")
-                .setContentText("" + timeLeft)
+                .setContentText(convertTime(timeLeft))
                 //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
-                .setPriority(1)
+                .setPriority(0)
                 //1 should be PUBLIC == show all the things in lock screen
                 .setVisibility(1)
                 .setOnlyAlertOnce(true)
                 //should dismiss notification when user clicks/taps on it
                 .setAutoCancel(true)
+
 
         //create notification channel if using android oreo or higher
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
@@ -167,13 +161,18 @@ class LeftFragment : Fragment() {
             channel.description = "channel desc"
             jManager?.createNotificationChannel(channel)
         }
-        //push the notification
-        jManager?.notify(1, jBuilder?.build())
     }
 
     override fun onDestroy() {
         super.onDestroy()
         jManager?.cancel(1)
+    }
+
+    fun convertTime(seconds: Long): String {
+        val minutes = seconds / (60)
+        val secs = seconds % 60
+        val formatted = String.format("%d:%02d", minutes, secs)
+        return formatted
     }
 
 
