@@ -46,7 +46,7 @@ class SigninActivity : AppCompatActivity() {
             val startMain: Intent = Intent(this, MainActivity::class.java).apply {
                 putExtra("LOGIN", "success")
             }
-            if(usernameText.text.isNotBlank() || passwordText.text.isNotBlank()) {
+            if(usernameText.text.isNotBlank() && passwordText.text.isNotBlank()) {
 
 
                 //get text from email and password fields

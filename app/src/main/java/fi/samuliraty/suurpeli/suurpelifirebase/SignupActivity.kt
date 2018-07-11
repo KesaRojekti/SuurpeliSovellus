@@ -25,8 +25,8 @@ class SignupActivity : AppCompatActivity() {
         //register button listener
         registerButton.setOnClickListener { _ ->
 
-            //check for blank fields
-            if (userNameText.text.isNotBlank() || passwordText.text.isNotBlank()) {
+            //check for blank fields, both have to contain something
+            if (userNameText.text.isNotBlank() && passwordText.text.isNotBlank()) {
 
 
                 //get input text from email and password fields
