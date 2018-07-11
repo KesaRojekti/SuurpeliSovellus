@@ -102,11 +102,6 @@ class MainActivity : AppCompatActivity() {
             timerValue.setValue(System.currentTimeMillis()+5400000)
         }
 
-        //actually just logs out atm
-        logoutButton.setOnClickListener { _ ->
-            auth.signOut()
-            finish()
-        }
 
         //check for changes in the realtime database
         val listener = object : ValueEventListener {
@@ -157,6 +152,11 @@ class MainActivity : AppCompatActivity() {
 
         if (id == R.id.action_settings) {
             Toast.makeText(this, "super awesome settings", Toast.LENGTH_SHORT).show()
+            return true
+        }
+        if(id == R.id.action_logout){
+            auth.signOut()
+            finish()
             return true
         }
 

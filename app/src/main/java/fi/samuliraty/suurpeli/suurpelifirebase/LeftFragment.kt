@@ -59,6 +59,21 @@ class LeftFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_left, container, false)
     }
 
+    //create and add listener for timer value in the database
+    private val valueListener = object :  ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.d("LeftFragValueListener", "no go")
+        }
+
+        override fun onDataChange(data: DataSnapshot) {
+            val timer:Any? = data.value
+            val time = (timer as Long).toLong()
+            timeLeft = time - System.currentTimeMillis()
+            timeLeft /= 1000
+            timerValueText.text = timeLeft.toString()
+        }
+    }
+
     override fun onResume() {
         super.onResume()
 
@@ -66,20 +81,7 @@ class LeftFragment : Fragment() {
         jManager?.cancel(1)
         pHandler.removeCallbacks(updatePaused)
 
-        //create and add listener for timer value in the database
-        val valueListener = object :  ValueEventListener {
-            override fun onCancelled(p0: DatabaseError) {
-                Log.d("LeftFragValueListener", "no go")
-            }
-
-            override fun onDataChange(data: DataSnapshot) {
-                val timer:Any? = data.value
-                val time = (timer as Long).toLong()
-                timeLeft = time - System.currentTimeMillis()
-                timeLeft /= 1000
-                timerValueText.text = timeLeft.toString()
-            }
-        }
+        //add listener for database value changes (also get the data for the first time)
         timerValue.addValueEventListener(valueListener)
         updateTimer.run()
         /*
@@ -140,6 +142,8 @@ class LeftFragment : Fragment() {
         super.onPause()
         //stop refreshing timer
         mHandler.removeCallbacks(updateTimer)
+        //remove value listener so we don't crash the app if it changes while paused
+        timerValue.removeEventListener(valueListener)
         updatePaused.run()
         //create notification manager
         jManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
