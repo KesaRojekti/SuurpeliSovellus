@@ -49,6 +49,8 @@ class LeftFragment : Fragment() {
     val pHandler: Handler = Handler()
     //create a field for notification manager
     private var jManager: NotificationManager? = null
+    //create id for the timer notification
+    private val TimerNotificationID: Int = 1
 
     //create a field for the notification
     private var jBuilder: NotificationCompat.Builder? = null
@@ -78,7 +80,7 @@ class LeftFragment : Fragment() {
         super.onResume()
 
         //cancel notification when app is active
-        jManager?.cancel(1)
+        jManager?.cancel(TimerNotificationID)
         pHandler.removeCallbacks(updatePaused)
 
         //add listener for database value changes (also get the data for the first time)
@@ -116,11 +118,11 @@ class LeftFragment : Fragment() {
 
             //if timer reaches 0 stop updating and dismiss notification
             if(timeLeft <= 0){
-                jManager?.cancel(1)
+                jManager?.cancel(TimerNotificationID)
                 pHandler.removeCallbacks(this)
             }
             //push notification
-            jManager?.notify(1, jBuilder?.build())
+            jManager?.notify(TimerNotificationID, jBuilder?.build())
         }
     }
 
@@ -170,7 +172,7 @@ class LeftFragment : Fragment() {
         //create notification channel if using android oreo or higher
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
-            val channel: NotificationChannel = NotificationChannel("default", "jotain", NotificationManager.IMPORTANCE_DEFAULT)
+            val channel: NotificationChannel = NotificationChannel("default", "timerNotification", NotificationManager.IMPORTANCE_DEFAULT)
             channel.description = "channel desc"
             jManager?.createNotificationChannel(channel)
         }
@@ -182,7 +184,7 @@ class LeftFragment : Fragment() {
         pHandler.removeCallbacks(updatePaused)
         mHandler.removeCallbacks(updateTimer)
         //dismiss timer notification
-        jManager?.cancel(1)
+        jManager?.cancel(TimerNotificationID)
     }
 
     //convert time to mm:ss format
