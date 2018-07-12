@@ -1,9 +1,8 @@
 package fi.samuliraty.suurpeli.suurpelifirebase
 
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
+import android.app.*
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -139,7 +138,11 @@ class LeftFragment : Fragment() {
         val def = false
         val stance = sharedPref?.getBoolean(sharedKey, def)
 
-
+        //set up a "return intent", use this to get back to the app from the notification
+        val returnIntent: Intent = Intent(activity?.baseContext, MainActivity::class.java)
+        val stackBuilder: TaskStackBuilder = TaskStackBuilder.create(activity?.baseContext)
+        stackBuilder.addNextIntentWithParentStack(returnIntent)
+        val returnPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         //start pushing notification if necessary
         if(timeLeft > 0 && stance!!){
@@ -160,6 +163,8 @@ class LeftFragment : Fragment() {
                 .setOnlyAlertOnce(true)
                 //should dismiss notification when user clicks/taps on it
                 .setAutoCancel(true)
+                //set the intent which fires when you click the notification
+                .setContentIntent(returnPendingIntent)
 
 
         //create notification channel if using android oreo or higher
