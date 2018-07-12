@@ -43,6 +43,7 @@ class MainActivity : AppCompatActivity() {
      */
     private var mSectionsPagerAdapter: SectionsPagerAdapter? = null
     private val auth:FirebaseAuth = FirebaseAuth.getInstance()
+    private val sDiag: SettingsDialogFragment = SettingsDialogFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +66,6 @@ class MainActivity : AppCompatActivity() {
                     finish()
                 }
             }
-
         }
 
 
@@ -139,6 +139,12 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
+
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        moveTaskToBack(true)
+    }
+
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         // Inflate the menu; this adds items to the action bar if it is present.
         menuInflater.inflate(R.menu.menu_main, menu)
@@ -152,7 +158,9 @@ class MainActivity : AppCompatActivity() {
         val id = item.itemId
 
         if (id == R.id.action_settings) {
-            Toast.makeText(this, "super awesome settings", Toast.LENGTH_SHORT).show()
+
+            val fm: android.app.FragmentManager? = fragmentManager
+            sDiag.show(fm, "missiles")
             return true
         }
         if(id == R.id.action_logout){

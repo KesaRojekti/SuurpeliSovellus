@@ -33,6 +33,10 @@ Pelin aikana komentaja seuraa pelin etenemistä ja johtaa joukkojaan, varsinaise
 
 Komentajana toimiminen on haastaavaa, mutta palkitsevaa. Johtotehtävissä pelin kokee laajemmassa mittakaavassa kuin kentällä ja tämä jos jokin on valaiseva kokemus. Parhaiten komentajan paikalle sopii jo aiemmin Suurpeleihin osallistunut kokenut paintball-harrastaja. Kokonaisuuden hahmottamisesta, paineensietokyvystä ja kyvystä tehdä nopeita päätöksiä on varmasti etua, samoin riittävästä määrästä auktoriteettia. Taktista silmää on myös löydyttävä, eli on ymmärrettävä mitä tässä lajissa voidaan tehdä ja miten. Hyvää kokemusta komentajatehtäviä varten saa toimimalla ensin sektorinjohtajana. Komentajat valitaan pelinjärjestäjän toimesta.</string>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <!-- Settings dialog stuff -->
+    <string-array name="settings_dialog_options">
+        <item>Show notifications</item>
+    </string-array>
+
+    <string name="settings_notifications_key">notificationKey</string>
 </resources>

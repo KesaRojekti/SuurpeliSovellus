@@ -71,7 +71,7 @@ class LeftFragment : Fragment() {
             val time = (timer as Long).toLong()
             timeLeft = time - System.currentTimeMillis()
             timeLeft /= 1000
-            timerValueText.text = convertTime(timeLeft)
+            //timerValueText.text = convertTime(timeLeft)
         }
     }
 
@@ -133,8 +133,16 @@ class LeftFragment : Fragment() {
         //remove value listener so we don't crash the app if it changes while paused
         timerValue.removeEventListener(valueListener)
 
+        //settings stuff
+        val sharedPref = activity?.getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
+        val sharedKey = getString(R.string.settings_notifications_key)
+        val def = false
+        val stance = sharedPref?.getBoolean(sharedKey, def)
+
+
+
         //start pushing notification if necessary
-        if(timeLeft > 0){
+        if(timeLeft > 0 && stance!!){
             updatePaused.run()
         }
         //create notification manager
@@ -175,9 +183,10 @@ class LeftFragment : Fragment() {
     fun convertTime(seconds: Long): String {
         val minutes = seconds / (60)
         val secs = seconds % 60
-        val formatted = String.format("%d:%02d", minutes, secs)
-        return formatted
+        return String.format("%d:%02d", minutes, secs)
     }
+
+
 
 
 
