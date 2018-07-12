@@ -39,14 +39,13 @@ private const val ARG_PARAM2 = "param2"
 class LeftFragment : Fragment() {
 
     //get databse instance and reference to a value
-    val database = FirebaseDatabase.getInstance()
-    val timerValue = database.getReference("targetTime")
-    var timeLeft: Long = 0
-    var testTime: Int = 5
+    private val database = FirebaseDatabase.getInstance()
+    private val timerValue = database.getReference("targetTime")
+    private var timeLeft: Long = 0
     //while active handler
-    val mHandler: Handler = Handler()
+    private val mHandler: Handler = Handler()
     //while paused handler
-    val pHandler: Handler = Handler()
+    private val pHandler: Handler = Handler()
     //create a field for notification manager
     private var jManager: NotificationManager? = null
     //create id for the timer notification
