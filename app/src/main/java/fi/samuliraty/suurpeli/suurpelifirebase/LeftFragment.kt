@@ -180,6 +180,7 @@ class LeftFragment : Fragment() {
         jManager?.cancel(1)
     }
 
+    //convert time to mm:ss format
     fun convertTime(seconds: Long): String {
         val minutes = seconds / (60)
         val secs = seconds % 60

@@ -5,6 +5,7 @@ import android.app.DialogFragment
 import android.app.Fragment
 import android.content.Context
 import android.content.DialogInterface
+import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.support.v7.app.AlertDialog
@@ -45,6 +46,10 @@ class SettingsDialogFragment : DialogFragment() {
                     //only write changes if you made any
                     if(changes){
                         writePreferences()
+                        //reload MainActivity so the changes you made take effect
+                        val reload: Intent = Intent(activity?.baseContext, MainActivity::class.java)
+                        reload.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                        startActivity(reload)
                     }
                 }
 
