@@ -75,15 +75,19 @@ class LeftFragment : Fragment() {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
 
         //cancel notification when app is active
         jManager?.cancel(TimerNotificationID)
+        //remove pause handler callbacks
         pHandler.removeCallbacks(updatePaused)
 
         //add listener for database value changes (also get the data for the first time)
         timerValue.addValueEventListener(valueListener)
+
+        //start updating timer
         updateTimer.run()
 
     }
@@ -176,6 +180,7 @@ class LeftFragment : Fragment() {
             jManager?.createNotificationChannel(channel)
         }
     }
+
 
     override fun onDestroy() {
         super.onDestroy()
