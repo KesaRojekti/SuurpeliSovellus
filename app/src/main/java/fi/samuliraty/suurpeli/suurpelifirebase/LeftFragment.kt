@@ -3,29 +3,20 @@ package fi.samuliraty.suurpeli.suurpelifirebase
 import android.app.*
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
 import android.support.v4.app.NotificationCompat
-import android.support.v4.app.NotificationManagerCompat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.android.gms.flags.impl.DataUtils
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import kotlinx.android.synthetic.main.fragment_left.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
-import java.text.SimpleDateFormat
-import java.util.*
-import kotlin.concurrent.schedule
-import kotlin.concurrent.timerTask
 
 
 // TODO: Rename parameter arguments, choose names that match
@@ -141,7 +132,7 @@ class LeftFragment : Fragment() {
         val sharedPref = activity?.getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
         val sharedKey = getString(R.string.settings_notifications_key)
         val def = false
-        val stance = sharedPref?.getBoolean(sharedKey, def)
+        val showNotifications = sharedPref?.getBoolean(sharedKey, def)
 
         //set up a "return intent", use this to get back to the app from the notification
         val returnIntent: Intent = Intent(activity?.baseContext, MainActivity::class.java)
@@ -150,7 +141,7 @@ class LeftFragment : Fragment() {
         val returnPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
         //start pushing notification if necessary
-        if(timeLeft > 0 && stance!!){
+        if(timeLeft > 0 && showNotifications!!){
             updatePaused.run()
         }
         //create notification manager
