@@ -11,7 +11,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_signin.*
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
-
+import android.content.res.Configuration
+import android.graphics.Bitmap
 
 
 class SigninActivity : AppCompatActivity() {
@@ -38,7 +39,6 @@ class SigninActivity : AppCompatActivity() {
         }
 
 
-        titleText.text = getString(R.string.login_title)
 
         //sign in button listener
         intentButton.setOnClickListener { _ ->
@@ -111,5 +111,16 @@ class SigninActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         finish()
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration?) {
+        super.onConfigurationChanged(newConfig)
+        val restart: Intent = Intent(this@SigninActivity, MainActivity::class.java)
+        if(newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Log.d("it fires", "configChanged")
+        }
+        else if(newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT){
+            Log.d("it fires", "configChanged")
+        }
     }
 }
