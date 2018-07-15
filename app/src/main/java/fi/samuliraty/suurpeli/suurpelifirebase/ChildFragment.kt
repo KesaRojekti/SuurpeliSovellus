@@ -43,9 +43,14 @@ class ChildFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_child, container, false)
     }
 
+    //create a runnable which updates the news every X milliseconds
     private val newsUpdater: Runnable = object : Runnable {
         override fun run() {
+            //pause = when user clicks on the news buttons
             if(!isOnPause){
+                //counter within the runnable, every 10 runs increment index which changes the news
+                //by using the counter we can have better response time to user inputs, i.e if you press
+                //back it only takes 100ms to update the news, instead of the full 1 second
                 i++
                 if(i > 10){
                     index++
@@ -77,7 +82,7 @@ class ChildFragment : Fragment() {
                     newsIndicators(index)
                 }
             }
-
+            //run every 100ms
             newsHandler.postDelayed(this, 100)
         }
     }
@@ -92,6 +97,7 @@ class ChildFragment : Fragment() {
         }
     }
 
+    //update the circle indicators under the news text
     private fun newsIndicators(pos: Int){
         things = listOf(news1, news2, news3, news4, news5)
         for(n in things){
