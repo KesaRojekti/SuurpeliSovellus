@@ -1,22 +1,14 @@
 package fi.samuliraty.suurpeli.suurpelifirebase
 
 
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
-import android.support.constraint.ConstraintLayout
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import kotlinx.android.synthetic.main.fragment_child.*
-import kotlinx.android.synthetic.main.fragment_left.*
 import org.jetbrains.anko.doAsync
 
 
@@ -37,15 +29,20 @@ class ChildFragment : Fragment() {
     private var isOnPause = false
     private lateinit var things: List<TextView>
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_child, container, false)
     }
 
+
+
     //create a runnable which updates the news every X milliseconds
     private val newsUpdater: Runnable = object : Runnable {
         override fun run() {
+
             //pause = when user clicks on the news buttons
             if(!isOnPause){
                 //counter within the runnable, every 10 runs increment index which changes the news
@@ -54,12 +51,14 @@ class ChildFragment : Fragment() {
                 i++
                 if(i > 10){
                     index++
+                    //newsText.startAnimation(anim)
                     i = 0
                 }
                 if(index > 4){
                     index = 0
                 }
             }
+
             when (index) {
                 0 -> {
                     newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
@@ -82,6 +81,7 @@ class ChildFragment : Fragment() {
                     newsIndicators(index)
                 }
             }
+
             //run every 100ms
             newsHandler.postDelayed(this, 100)
         }
@@ -115,8 +115,11 @@ class ChildFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-
+        //start cycling the news
         newsUpdater.run()
+
+        //add listeners to back and forward buttons
+        //you can manually change the news with these
         buttonBack.setOnClickListener {
             index--
             if(index < 0){
@@ -136,6 +139,7 @@ class ChildFragment : Fragment() {
 
     override fun onStop() {
         super.onStop()
+        //stop cycling the news when the fragment is not visible
         newsHandler.removeCallbacks(newsUpdater)
     }
 
