@@ -50,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
         //get current user
         val user:FirebaseUser? = auth.currentUser
         Log.d("MainActivity user", "" + user)

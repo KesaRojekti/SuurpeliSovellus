@@ -7,6 +7,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
 import android.util.Log
 import android.view.LayoutInflater
@@ -47,6 +49,8 @@ class LeftFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_left, container, false)
     }
@@ -67,6 +71,7 @@ class LeftFragment : Fragment() {
     }
 
 
+
     override fun onResume() {
         super.onResume()
 
@@ -78,10 +83,16 @@ class LeftFragment : Fragment() {
         //add listener for database value changes (also get the data for the first time)
         timerValue.addValueEventListener(valueListener)
 
+        //add news fragment
+        childFragmentManager.beginTransaction().add(R.id.childView, ChildFragment()).commit()
+
+
         //start updating timer
         updateTimer.run()
 
     }
+
+
 
     //Create a runnable for updating the timer on screen
     private val updateTimer = object : Runnable {
@@ -127,6 +138,8 @@ class LeftFragment : Fragment() {
         mHandler.removeCallbacks(updateTimer)
         //remove value listener so we don't crash the app if it changes while paused
         timerValue.removeEventListener(valueListener)
+
+
 
         //settings stuff
         val sharedPref = activity?.getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
