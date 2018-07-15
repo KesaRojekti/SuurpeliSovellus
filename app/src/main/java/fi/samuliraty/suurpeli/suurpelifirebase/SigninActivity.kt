@@ -1,5 +1,6 @@
 package fi.samuliraty.suurpeli.suurpelifirebase
 
+import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
@@ -11,6 +12,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.activity_signin.*
 import android.content.Intent.FLAG_ACTIVITY_NEW_TASK
+import android.content.SharedPreferences
 import android.content.res.Configuration
 import android.graphics.Bitmap
 
@@ -29,6 +31,14 @@ class SigninActivity : AppCompatActivity() {
         //get current user
         val user: FirebaseUser? = auth.currentUser
 
+        //create a sharedPreferences file if it doesn't exist already, and default notification setting to TRUE
+        val sharedPref = getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
+        val sharedKey = getString(R.string.settings_notifications_key)
+        if(!sharedPref.contains(sharedKey)){
+            val editor = sharedPref?.edit()
+            editor?.putBoolean(sharedKey, true)
+            editor?.apply()
+        }
 
         //if you are already logged in skip the login activity
         if(user != null){
