@@ -135,13 +135,22 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
+        Log.d("MainActivity.onDestroy", "destroyed")
         finish()
     }
 
 
     override fun onBackPressed() {
         //super.onBackPressed()
-        moveTaskToBack(true)
+
+        //check if you are logged in or not
+        //if you are not close the app
+        //if you are move the app to the background for the notifications
+        val mUser: FirebaseUser? = auth.currentUser
+        if(mUser != null){
+            moveTaskToBack(true)
+        }
+
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

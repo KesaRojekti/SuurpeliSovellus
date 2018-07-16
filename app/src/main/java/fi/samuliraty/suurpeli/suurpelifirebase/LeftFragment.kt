@@ -136,10 +136,6 @@ class LeftFragment : Fragment() {
         super.onPause()
         //stop refreshing timer
         mHandler.removeCallbacks(updateTimer)
-        //remove value listener so we don't crash the app if it changes while paused
-        timerValue.removeEventListener(valueListener)
-
-
 
         //settings stuff
         val sharedPref = activity?.getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
