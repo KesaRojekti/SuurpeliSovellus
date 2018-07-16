@@ -89,7 +89,8 @@ class FragmentMapEvent: Fragment(),
                 .findFragmentById(R.id.map_event) as SupportMapFragment
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
 
-
+        timerValue.addValueEventListener(valueListener)
+        timerValue2.addValueEventListener(valueListener)
         mapFragment.getMapAsync(this)
         return mView
     }
@@ -105,14 +106,16 @@ class FragmentMapEvent: Fragment(),
         }
         fusedLocationClient.lastLocation
                     .addOnSuccessListener { location: Location? ->
-                        val latitudeLongitude = LatLng(location!!.latitude, location.longitude)
-                        mMap.addMarker(MarkerOptions().position(latitudeLongitude).title("It is MEEEEE!!"))
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latitudeLongitude))
-                        mMap.setMinZoomPreference(6f)
-                        mMap.setMaxZoomPreference(14f)
+                        lateinit var latitudeLongitude: LatLng
+                        if(location != null){
+                            latitudeLongitude = LatLng(location.latitude, location.longitude)
+                            mMap.addMarker(MarkerOptions().position(latitudeLongitude).title("It is MEEEEE!!"))
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(latitudeLongitude))
+                            mMap.setMinZoomPreference(6f)
+                            mMap.setMaxZoomPreference(14f)
+                        }
                     }
-        timerValue.addValueEventListener(valueListener)
-        timerValue2.addValueEventListener(valueListener)
+
     }
 
     /**
