@@ -183,7 +183,7 @@ class MainActivity : AppCompatActivity() {
             // Return a PlaceholderFragment (defined as a static inner class below).
             when (position){
                 0 -> return LeftFragment()
-                1 -> return MiddleFragment()
+                1 -> return FragmentMapEvent()
                 else -> return RightFragment()
             }
             //return PlaceholderFragment.newInstance(position)
