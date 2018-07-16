@@ -155,13 +155,14 @@ class LeftFragment : Fragment() {
 
         //start pushing notification if necessary
         if(timeLeft > 0 && showNotifications!!){
+            Log.d("showNotifications", "" + showNotifications)
             updatePaused.run()
         }
         //create notification manager
         jManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         //create a notification
-        jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "notify_001")
+        jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "default")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("Game time remaining:")
                 .setContentText(convertTime(timeLeft))
