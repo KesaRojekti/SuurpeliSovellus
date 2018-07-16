@@ -8,6 +8,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+
 import kotlinx.android.synthetic.main.fragment_child.*
 import org.jetbrains.anko.doAsync
 
@@ -28,11 +29,22 @@ class ChildFragment : Fragment() {
     private var i: Int = 0
     private var isOnPause = false
     private lateinit var things: List<TextView>
+    private lateinit var v: View
+    private lateinit var textView: TextView
 
+    //transition stuff
+    private var textHasChanged = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+        /*
+        v = inflater.inflate(R.layout.fragment_child, container, false)
+        val transitionContainer: ViewGroup = v.findViewById(R.id.transitions_container)
+        textView = transitionContainer.findViewById(R.id.transitionText)
 
+
+        return v
+        */
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_child, container, false)
     }
@@ -51,6 +63,7 @@ class ChildFragment : Fragment() {
                 i++
                 if(i > 10){
                     index++
+                    //textHasChanged = true
                     //newsText.startAnimation(anim)
                     i = 0
                 }
@@ -60,6 +73,53 @@ class ChildFragment : Fragment() {
             }
 
             when (index) {
+                /*
+                0 -> {
+                    if(textHasChanged) {
+                        TransitionManager.beginDelayedTransition(transitions_container, ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN))
+                        //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        transitionText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        newsIndicators(index)
+                        textHasChanged = false
+                    }
+                }
+                1 -> {
+                    if(textHasChanged) {
+                        TransitionManager.beginDelayedTransition(transitions_container, ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN))
+                        //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        transitionText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        newsIndicators(index)
+                        textHasChanged = false
+                    }
+                }
+                2 -> {
+                    if(textHasChanged) {
+                        TransitionManager.beginDelayedTransition(transitions_container, ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN))
+                        //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        transitionText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        newsIndicators(index)
+                        textHasChanged = false
+                    }
+                }
+                3 -> {
+                    if(textHasChanged) {
+                        TransitionManager.beginDelayedTransition(transitions_container, ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN))
+                        //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        transitionText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        newsIndicators(index)
+                        textHasChanged = false
+                    }
+                }
+                else -> {
+                    if(textHasChanged) {
+                        TransitionManager.beginDelayedTransition(transitions_container, ChangeText().setChangeBehavior(ChangeText.CHANGE_BEHAVIOR_OUT_IN))
+                        //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        transitionText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                        newsIndicators(index)
+                        textHasChanged = false
+                    }
+                }
+                */
                 0 -> {
                     newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
@@ -112,7 +172,7 @@ class ChildFragment : Fragment() {
         }
     }
 
-
+    //@AddTrace(name = "childFragment", enabled = true)
     override fun onResume() {
         super.onResume()
         //start cycling the news
@@ -122,6 +182,7 @@ class ChildFragment : Fragment() {
         //you can manually change the news with these
         buttonBack.setOnClickListener {
             index--
+            //textHasChanged = true
             if(index < 0){
                 index = 4
             }
@@ -130,6 +191,7 @@ class ChildFragment : Fragment() {
 
         buttonFwd.setOnClickListener {
             index++
+            //textHasChanged = true
             if(index > 4){
                 index = 0
             }

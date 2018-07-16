@@ -179,8 +179,8 @@ class LeftFragment : Fragment() {
         //create notification channel if using android oreo or higher
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
-            val channel: NotificationChannel = NotificationChannel("default", "timerNotification", NotificationManager.IMPORTANCE_DEFAULT)
-            channel.description = "channel desc"
+            val channel: NotificationChannel = NotificationChannel("default", "Game time while hidden", NotificationManager.IMPORTANCE_DEFAULT)
+            channel.description = "Display timer while app is hidden"
             jManager?.createNotificationChannel(channel)
         }
     }
