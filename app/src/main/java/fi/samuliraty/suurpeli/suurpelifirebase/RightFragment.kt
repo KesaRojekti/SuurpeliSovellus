@@ -29,11 +29,15 @@ class RightFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         val listView = lvExp as ExpandableListView
+        //populate lists
         initData()
         val listAdapter = ExpandableListAdapter(activity?.baseContext, listDataHeader, listHash)
         listView.setAdapter(listAdapter)
     }
 
+    /**
+     * Populate the listDataHeader and listHash with data
+     */
     private fun initData(){
         listHash = HashMap<String, List<String>>()
 

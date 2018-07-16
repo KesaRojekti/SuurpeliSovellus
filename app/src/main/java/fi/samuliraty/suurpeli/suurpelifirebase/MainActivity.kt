@@ -139,7 +139,9 @@ class MainActivity : AppCompatActivity() {
         finish()
     }
 
-
+    /**
+     * Back button functions
+     */
     override fun onBackPressed() {
         //super.onBackPressed()
 

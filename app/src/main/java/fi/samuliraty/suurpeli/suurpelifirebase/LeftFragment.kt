@@ -56,6 +56,10 @@ class LeftFragment : Fragment() {
     }
 
     //create and add listener for timer value in the database
+    /**
+     * Create a listener to pull timer data from the database
+     * If it detects a change in the value it gets pulled again
+     */
     private val valueListener = object :  ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
             Log.d("LeftFragValueListener", "no go")
@@ -93,8 +97,16 @@ class LeftFragment : Fragment() {
     }
 
 
-
-    //Create a runnable for updating the timer on screen
+    /**
+     * Runnable object to:
+     *
+     * Update the timer every 1000ms
+     * Also converts the timer which is in milliseconds to (mm:ss) format
+     *
+     * If the timer reaches 0, stop updating
+     *
+     * called in onResume
+     */
     private val updateTimer = object : Runnable {
         override fun run() {
             timeLeft--
@@ -112,7 +124,15 @@ class LeftFragment : Fragment() {
         }
     }
 
-    //create a runnable for updating the timer when app is not active
+    /**
+     * Runnable object to:
+     *
+     * Push notifications every <delayMS> for the timer
+     * timeLeft is in milliseconds, so we can subtract the <delayMS> from that
+     * and we have the correct time in the notification.
+     * Update the notifications ContentText
+     * Called in onPause
+     */
     private val updatePaused: Runnable = object: Runnable {
         override fun run() {
             val delayMS: Long = 1000
@@ -192,7 +212,9 @@ class LeftFragment : Fragment() {
         jManager?.cancel(TimerNotificationID)
     }
 
-    //convert time to mm:ss format
+    /**
+     * Convert seconds to a more traditional timer format (mm:ss)
+     */
     fun convertTime(seconds: Long): String {
         val minutes = seconds / (60)
         val secs = seconds % 60
