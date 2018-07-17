@@ -14,10 +14,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.fragment_left.*
 
 
@@ -34,6 +31,7 @@ class LeftFragment : Fragment() {
     //get databse instance and reference to a value
     private val database = FirebaseDatabase.getInstance()
     private val timerValue = database.getReference("targetTime")
+    private val lippuRef: DatabaseReference = database.getReference("lippu3")
     private var timeLeft: Long = 0
     //while active handler
     private val mHandler: Handler = Handler()
@@ -74,11 +72,22 @@ class LeftFragment : Fragment() {
         }
     }
 
+    private val lippuData: ValueEventListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+            Log.d("lippuData","failed")
+        }
+
+        override fun onDataChange(data: DataSnapshot) {
+
+        }
+    }
+
 
 
     override fun onResume() {
         super.onResume()
 
+        lippuRef.addValueEventListener(lippuData)
         //cancel notification when app is active
         jManager?.cancel(TimerNotificationID)
         //remove pause handler callbacks
