@@ -4,10 +4,12 @@ package fi.samuliraty.suurpeli.suurpelifirebase
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import com.google.firebase.database.*
 
 import kotlinx.android.synthetic.main.fragment_child.*
 import org.jetbrains.anko.doAsync
@@ -28,6 +30,9 @@ class ChildFragment : Fragment() {
     private var index: Int = 0
     private var i: Int = 0
     private var isOnPause = false
+    private val database = FirebaseDatabase.getInstance()
+    private val newsRef: DatabaseReference = database.getReference("news")
+    private val newsList: MutableList<News> = ArrayList()
     private lateinit var things: List<TextView>
     private lateinit var v: View
     private lateinit var textView: TextView
@@ -50,6 +55,37 @@ class ChildFragment : Fragment() {
     }
 
 
+    //news listener
+    private val newsListener = object : ChildEventListener {
+        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            //irrelevant for us, the order of the news doesn't really matter
+        }
+
+        override fun onCancelled(p0: DatabaseError) {
+            Log.d("newsListener", "failed")
+        }
+
+        override fun onChildAdded(data: DataSnapshot, p1: String?) {
+            val news: News? = data.getValue(News::class.java)
+            news?.title = data.key
+            newsList.add(news!!)
+            //Log.d("onChildAdded", "added: " + news.title + news.content + news.author)
+        }
+
+        override fun onChildChanged(data: DataSnapshot, p1: String?) {
+            Log.d("childChanged", data.key)
+            //returns the child that got changed
+            //TODO: change the object in newsList
+        }
+
+        override fun onChildRemoved(data: DataSnapshot) {
+            //returns the child which got deleted
+            //TODO: remove the object from newsList
+            Log.d("childRemoved", data.key)
+        }
+
+
+    }
 
     //create a runnable which updates the news every X milliseconds
     private val newsUpdater: Runnable = object : Runnable {
@@ -67,7 +103,11 @@ class ChildFragment : Fragment() {
                     //newsText.startAnimation(anim)
                     i = 0
                 }
-                if(index > 4){
+                var maxNews = newsList.size-1
+                if(maxNews > 4){
+                    maxNews = 4
+                }
+                if(index > maxNews){
                     index = 0
                 }
             }
@@ -121,23 +161,58 @@ class ChildFragment : Fragment() {
                 }
                 */
                 0 -> {
-                    newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                    if(newsList.size > index){
+                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
+                    }
+                    else
+                    {
+                        newsText.text = "END OF NEWS"
+                    }
+                    //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 1 -> {
-                    newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                    if(newsList.size > index){
+                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
+                    }
+                    else
+                    {
+                        newsText.text = "END OF NEWS"
+                    }
+                    //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 2 -> {
-                    newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                    if(newsList.size > index){
+                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
+                    }
+                    else
+                    {
+                        newsText.text = "END OF NEWS"
+                    }
+                    //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 3 -> {
-                    newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                    if(newsList.size > index){
+                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
+                    }
+                    else
+                    {
+                        newsText.text = "END OF NEWS"
+                    }
+                    //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 else -> {
-                    newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
+                    if(newsList.size > 4){
+                        newsText.text = newsList[4].title + " " + newsList[4].content + " " + newsList[4].author
+                    }
+                    else
+                    {
+                        newsText.text = "END OF NEWS"
+                    }
+                    //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
             }
@@ -158,6 +233,7 @@ class ChildFragment : Fragment() {
     }
 
     //update the circle indicators under the news text
+    //TODO: dynamic amount of newsIndicators, while staying centered
     private fun newsIndicators(pos: Int){
         things = listOf(news1, news2, news3, news4, news5)
         for(n in things){
@@ -177,7 +253,7 @@ class ChildFragment : Fragment() {
         super.onResume()
         //start cycling the news
         newsUpdater.run()
-
+        newsRef.addChildEventListener(newsListener)
         //add listeners to back and forward buttons
         //you can manually change the news with these
         buttonBack.setOnClickListener {
