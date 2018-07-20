@@ -31,7 +31,9 @@ class ChildFragment : Fragment() {
     private var i: Int = 0
     private var isOnPause = false
     private val database = FirebaseDatabase.getInstance()
-    private val newsRef: DatabaseReference = database.getReference("news")
+    //private val newsRef: DatabaseReference = database.getReference("news")
+    //query 5 latest news
+    private val newsRef: Query = database.getReference("news").orderByChild("date").limitToLast(5)
     private val newsList: MutableList<News> = ArrayList()
     private lateinit var things: List<TextView>
     private lateinit var v: View
@@ -66,6 +68,7 @@ class ChildFragment : Fragment() {
         }
 
         override fun onChildAdded(data: DataSnapshot, p1: String?) {
+
             val news: News? = data.getValue(News::class.java)
             news?.title = data.key
             newsList.add(news!!)
@@ -97,7 +100,7 @@ class ChildFragment : Fragment() {
                 //by using the counter we can have better response time to user inputs, i.e if you press
                 //back it only takes 100ms to update the news, instead of the full 1 second
                 i++
-                if(i > 10){
+                if(i > 40){
                     index++
                     //textHasChanged = true
                     //newsText.startAnimation(anim)
@@ -162,55 +165,35 @@ class ChildFragment : Fragment() {
                 */
                 0 -> {
                     if(newsList.size > index){
-                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
-                    }
-                    else
-                    {
-                        newsText.text = "END OF NEWS"
+                        newsText.text = newsList[index].title + "\n" + newsList[index].content + "\n" + newsList[index].author
                     }
                     //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 1 -> {
                     if(newsList.size > index){
-                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
-                    }
-                    else
-                    {
-                        newsText.text = "END OF NEWS"
+                        newsText.text = newsList[index].title + "\n" + newsList[index].content + "\n" + newsList[index].author
                     }
                     //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 2 -> {
                     if(newsList.size > index){
-                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
-                    }
-                    else
-                    {
-                        newsText.text = "END OF NEWS"
+                        newsText.text = newsList[index].title + "\n" + newsList[index].content + "\n" + newsList[index].author
                     }
                     //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 3 -> {
                     if(newsList.size > index){
-                        newsText.text = newsList[index].title + " " + newsList[index].content + " " + newsList[index].author
-                    }
-                    else
-                    {
-                        newsText.text = "END OF NEWS"
+                        newsText.text = newsList[index].title + "\n" + newsList[index].content + "\n" + newsList[index].author
                     }
                     //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
                 }
                 else -> {
                     if(newsList.size > 4){
-                        newsText.text = newsList[4].title + " " + newsList[4].content + " " + newsList[4].author
-                    }
-                    else
-                    {
-                        newsText.text = "END OF NEWS"
+                        newsText.text = newsList[4].title + "\n" + newsList[4].content + " " + newsList[4].author
                     }
                     //newsText.text = "news: " + index + " is awesome, but not that awesome tho it's still pretty awesome so in conclusion it's awesome"
                     newsIndicators(index)
@@ -259,8 +242,12 @@ class ChildFragment : Fragment() {
         buttonBack.setOnClickListener {
             index--
             //textHasChanged = true
+            var maxSize = newsList.size-1
+            if(maxSize > 4){
+                maxSize = 4
+            }
             if(index < 0){
-                index = 4
+                index = maxSize
             }
             pauseCallbacks()
         }
@@ -268,7 +255,11 @@ class ChildFragment : Fragment() {
         buttonFwd.setOnClickListener {
             index++
             //textHasChanged = true
-            if(index > 4){
+            var maxSize = newsList.size-1
+            if(maxSize > 4){
+                maxSize = 4
+            }
+            if(index > maxSize){
                 index = 0
             }
             pauseCallbacks()

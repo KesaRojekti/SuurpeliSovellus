@@ -1,5 +1,8 @@
 package fi.samuliraty.suurpeli.suurpelifirebase;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class News {
 
     private String title;
