@@ -1,0 +1,129 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Authentication Example</title>
+  <link rel="stylesheet" href="css/main.css">
+
+    <!--include firebase-->
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-database.js"></script>
+    
+
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBPCv10R9am_2_Qtq-XkBvGpF1woHQFTJI",
+        authDomain: "suurpelisovellus.firebaseapp.com",
+        databaseURL: "https://suurpelisovellus.firebaseio.com",
+        projectId: "suurpelisovellus",
+        storageBucket: "suurpelisovellus.appspot.com",
+        messagingSenderId: "654290473334"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+    <!--include firebase using scripts after the initialization-->
+    <script src="./scripts/lippu-data.js"></script>
+
+    
+    <script>
+
+      var timeLeft = -1;
+      //check for auth changes
+      function onAuthStateChanged(user){
+        //take the user back to index.html if not logged in
+        if(user === null){
+          window.location.href="index.html";
+        }
+      }
+      //check if you are logged in at page load
+      window.addEventListener('load', function() {
+        firebase.auth().onAuthStateChanged(onAuthStateChanged);
+      }, false);
+
+      function logout(){
+        firebase.auth().signOut();
+      }
+
+      var timerRef = firebase.database().ref('targetTime');
+      timerRef.on('value', function(snapshot) {
+        convertTime(snapshot.val());
+      });
+
+      //convert time into milliseconds left until targetTime
+      function convertTime(timerValue){
+        var ts = new Date().getTime();
+        timeLeft = timerValue - ts;
+      }
+
+      //update the timer, convert the millsieconds into mm:ss format
+      function updateTimer(){
+        if(timeLeft < 0){
+          document.getElementById("timer").innerHTML = "no ongoing game.";
+        }
+        else{
+          timeLeft -= 1000;
+          var minutes = parseInt((timeLeft/1000)/60);
+          var seconds = parseInt((timeLeft/1000)%60);
+          var formattedSeconds = ("0" + seconds).slice(-2);
+          document.getElementById("timer").innerHTML = (minutes+":"+formattedSeconds);
+        }
+      }
+
+      //start the timer, unix timestamp + 90mins
+      function startTimer(){
+        firebase.database().ref('targetTime').set(new Date().getTime()+5400000);
+      }
+
+      //cancel the timer, just set the current unix timestamp
+      //this way it could also double as mark when you cancelled the timer
+      function cancelTimer(){
+        firebase.database().ref('targetTime').set(new Date().getTime());
+      }
+      
+      //update timer every 1000ms
+      window.setInterval(function(){
+          updateTimer();
+      }, 1000);
+
+
+    function navLiput(){
+      window.location.href="flags.html";
+    }
+
+    function navNews(){
+      window.location.href="news.html";
+    }
+
+    function navIndex(){
+      window.location.href="index.html";
+    }
+
+    </script>
+  </head>
+  <body>
+    <nav>
+        <button class="navButton" onclick="navIndex()">Index</button>
+        <button class="navButton" onclick="navLiput()">Liput</button>
+        <button class="navButton" onclick="navNews()">News</button>
+    </nav>
+    <main>
+      <button onclick="logout()">Logout</button>
+      <h1>Database</h1>
+      <p id="secretText">This is a secret!</p>
+      <p id="timer"></p>
+      <button onclick="startTimer()">Start timer</button>
+      <button onclick="cancelTimer()">Cancel timer</button>
+      <br><br>
+      <button onclick="pushTest()">Create a flag</button>
+      <button onclick="removeFlag()">Remove last flag</button>
+      <button onclick="clearFlags()">Clear flags</button>
+      <button onclick="activateNextFlag()">Activate next flag</button>
+      <button onclick="deactivateLastFlag()">Deactivate last true</button>
+      <table id="lippuData"></table>
+    </main>
+  </body>
+  </html>

@@ -1,0 +1,85 @@
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Authentication Example</title>
+  <link rel="stylesheet" href="css/main.css">
+
+    <!--include firebase-->
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-database.js"></script>
+    
+
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBPCv10R9am_2_Qtq-XkBvGpF1woHQFTJI",
+        authDomain: "suurpelisovellus.firebaseapp.com",
+        databaseURL: "https://suurpelisovellus.firebaseio.com",
+        projectId: "suurpelisovellus",
+        storageBucket: "suurpelisovellus.appspot.com",
+        messagingSenderId: "654290473334"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+    <!--include firebase using scripts after the initialization-->
+    <script src="./scripts/news.js"></script>
+    
+    <script>
+
+      function onAuthStateChanged(user){
+        if(user === null){
+          window.location.href="index.html";
+        }
+      }
+
+      window.addEventListener("load", function(){
+        firebase.auth().onAuthStateChanged(onAuthStateChanged);
+      }, false);
+
+      function logout(){
+        firebase.auth().signOut();
+      }
+
+
+    function navLiput(){
+      window.location.href="flags.html";
+    }
+
+    function navNews(){
+      window.location.href="news.html";
+    }
+
+    function navIndex(){
+      window.location.href="index.html";
+    }
+
+    </script>
+  </head>
+  <body>
+    <nav>
+        <button class="navButton" onclick="navIndex()">Index</button>
+        <button class="navButton" onclick="navLiput()">Liput</button>
+        <button class="navButton" onclick="navNews()">News</button>
+    </nav>
+    <main>
+      <button onclick="logout()">Logout</button>
+      <h1>News</h1>
+      <p>Title:</p>
+      <input class="inputField" id="title" type="text" placeholder="title">
+      <p>Content:</p>
+      <input class="inputField" id="content" type="text" placeholder="content">
+      <p>Author: (optional)</p>
+      <input class="inputField" id="author" type="text" placeholder="author">
+      <br>
+      <button onclick="createNews()">Create news</button>
+      <button onclick="clearNews()">Clear all news</button>
+      <button onclick="removeOldestNews()">Remove oldest</button>
+      <button onclick="removeLatestNews()">Remove latest</button>
+      <table id="newsTable"></table>
+    </main>
+  </body>
+  </html>

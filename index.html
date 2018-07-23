@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<!--
+Copyright (c) 2016 Google Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+<html>
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Firebase Authentication Example</title>
+  <link rel="stylesheet" href="./css/main.css">
+
+  <!--include firebase-->
+  <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-auth.js"></script>
+  <script>
+    // Initialize Firebase
+    var config = {
+      apiKey: "AIzaSyBPCv10R9am_2_Qtq-XkBvGpF1woHQFTJI",
+      authDomain: "suurpelisovellus.firebaseapp.com",
+      databaseURL: "https://suurpelisovellus.firebaseio.com",
+      projectId: "suurpelisovellus",
+      storageBucket: "suurpelisovellus.appspot.com",
+      messagingSenderId: "654290473334"
+    };
+    firebase.initializeApp(config);
+  </script>
+  <script>
+
+    function login(){
+      var email = document.getElementById("email").value;
+      var password = document.getElementById("password").value;
+      //sign out of any old user
+      if(firebase.auth().currentUser){
+        firebase.auth().signOut();
+      }
+      //try to log in
+      firebase.auth().signInWithEmailAndPassword(email, password).then(function() {
+        //successful login
+        document.getElementById("loginText").innerHTML = "Successfully logged in";
+        document.getElementById("email").value = "";
+        document.getElementById("password").value = "";
+      }).catch(function(error){
+        //failed login
+        alert("login failed");
+      });
+    }
+
+    function logout(){
+      if(firebase.auth().currentUser){
+        firebase.auth().signOut().then(function(){
+            alert("signout successful");
+        }).catch(function(error){
+            alert("signout failed");
+        });
+      }
+    }
+
+    function register(){
+      document.getElementById("regStatus").innerHTML = "";
+      var email = document.getElementById("regEmail").value;
+      var password = document.getElementById("regPassword").value;
+      firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
+        //creation successful
+        document.getElementById("regStatus").innerHTML = "Account created successfully";
+        document.getElementById("email").value = email;
+        document.getElementById("regEmail").value = "";
+        document.getElementById("regPassword").value = "";
+      }).catch(function(error){
+        //creation failed
+        document.getElementById("regStatus").innerHTML = "Account creation failed";
+      });
+    }
+
+    function navLiput(){
+      window.location.href="flags.html";
+    }
+
+    function navNews(){
+      window.location.href="news.html";
+    }
+
+    function navIndex(){
+      window.location.href="index.html";
+    }
+
+  </script>
+</head>
+<body>
+  <nav>
+    <button class="navButton" onclick="navIndex()">Index</button>
+    <button class="navButton" onclick="navLiput()">Liput</button>
+    <button class="navButton" onclick="navNews()">News</button>
+  </nav>
+  <main>
+      <h1>Suurpeli Auth</h1>
+      <p class="loginText" id="loginText"></p>
+      <input class="inputField" name="emailField" id="email" type="email" placeholder="email">
+      <input class="inputField" name="passwordField" id="password" type="password" placeholder="password">
+      <br>
+      <button class="loginButton" onclick="login()">Login</button>
+      <button class="loginButton" onclick="logout()">Logout</button>
+      <br>
+      <h4>Don't have an account yet? Register below</h4>
+      <input class="inputField" name="regEmailField" id="regEmail" type="email" placeholder="email">
+      <input class="inputField" name="regPasswordField" id="regPassword" type="password" placeholder="password">
+      <br>
+      <button class="loginButton" onclick="register()">Register</button>
+      <br>
+      <h1 id="regStatus"></h1>
+  </main>
+
+</body>
+</html>
