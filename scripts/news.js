@@ -112,3 +112,77 @@ function writeNews(){
   
   firebase.database().ref("news").update(updates);
 }
+
+function checkAdmin(user){
+  var adminRef = firebase.database().ref("admin");
+  adminRef.once("value", function(snapshot){
+    snapshot.forEach(function(users){
+      if(user.uid == users.key){
+        displayTools();
+      }
+    });
+  });
+}
+
+function displayTools(){
+
+  var container = document.getElementById("toolsContainer");
+
+  var pTitle = document.createElement("P");
+  pTitle.textContent = "Title:";
+
+  var pContent = document.createElement("P");
+  pContent.textContent = "Content:";
+
+  var pAuthor = document.createElement("P");
+  pAuthor.textContent = "Author: (optional)";
+
+  var iTitle = document.createElement("INPUT");
+  iTitle.className = "inputField";
+  iTitle.id = "title";
+  iTitle.type = "text";
+  iTitle.placeholder = "title";
+
+  var iContent = document.createElement("INPUT");
+  iContent.className = "inputField";
+  iContent.id = "content";
+  iContent.type = "text";
+  iContent.placeholder = "content";
+
+  var iAuthor = document.createElement("INPUT");
+  iAuthor.className = "inputField";
+  iAuthor.id = "author";
+  iAuthor.type = "text";
+  iAuthor.placeholder = "author";
+
+  var createNewsButton = document.createElement("BUTTON");
+  createNewsButton.textContent = "Create news";
+  createNewsButton.addEventListener("click", createNews);
+
+  var clearNewsButton = document.createElement("BUTTON");
+  clearNewsButton.textContent = "Clear all news";
+  clearNewsButton.onclick = function(){clearNews()};
+
+  var removeOldestButton = document.createElement("BUTTON");
+  removeOldestButton.textContent = "Remove oldest";
+  removeOldestButton.onclick = function(){removeOldestNews()};
+
+  var removeLatestButton = document.createElement("BUTTON");
+  removeLatestButton.textContent = "Remove latest";
+  removeLatestButton.onclick = function(){removeLatestNews()};
+
+  var br = document.createElement("BR");
+
+  container.appendChild(pTitle);
+  container.appendChild(iTitle);
+  container.appendChild(pContent);
+  container.appendChild(iContent);
+  container.appendChild(pAuthor);
+  container.appendChild(iAuthor);
+  container.appendChild(br);
+
+  container.appendChild(createNewsButton);
+  container.appendChild(clearNewsButton);
+  container.appendChild(removeOldestButton);
+  container.appendChild(removeLatestButton);
+}

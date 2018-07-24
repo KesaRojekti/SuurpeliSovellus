@@ -34,6 +34,10 @@
         if(user === null){
           window.location.href="index.html";
         }
+        else
+        {
+          checkAdmin(user);
+        }
       }
 
       window.addEventListener("load", function(){
@@ -68,17 +72,9 @@
     <main>
       <button onclick="logout()">Logout</button>
       <h1>News</h1>
-      <p>Title:</p>
-      <input class="inputField" id="title" type="text" placeholder="title">
-      <p>Content:</p>
-      <input class="inputField" id="content" type="text" placeholder="content">
-      <p>Author: (optional)</p>
-      <input class="inputField" id="author" type="text" placeholder="author">
-      <br>
-      <button onclick="createNews()">Create news</button>
-      <button onclick="clearNews()">Clear all news</button>
-      <button onclick="removeOldestNews()">Remove oldest</button>
-      <button onclick="removeLatestNews()">Remove latest</button>
+      <div id="toolsContainer">
+
+      </div>
       <table id="newsTable"></table>
     </main>
   </body>
