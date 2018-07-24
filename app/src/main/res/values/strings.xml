@@ -1,6 +1,6 @@
 <resources>
-    <string name="app_name">SuurpeliFirebase</string>
-    <string name="tab_text_1">Timer</string>
+    <string name="app_name">Suurpeli</string>
+    <string name="tab_text_1">Info</string>
     <string name="tab_text_2">Kartta</string>
     <string name="tab_text_3">Säännöt</string>
     <string name="action_settings">Settings</string>
@@ -13,6 +13,7 @@
     <string name="register_button_text">Register</string>
     <string name="signin_button_text">Sign in</string>
     <string name="logout_text">Logout</string>
+    <string name="exit_text">Exit</string>
     <string name="pst_rule">PST-pelaaja (panssarintorjunta-pelaaja) toimii peruspelaaja, mutta omaa myös kyvyn tehdä pelissä käyttäviä ajoneuvoja toimintakyvyttömiksi.\nAjoneuvojen pysäyttämistä varten PST-pelajaalla on toinen merkkain mukana, sekä oman värisiä kuulia, jioden väri muuttuu joka vuosi. Toiseksi merkkaimeksi sopii hyvin vaikkapa pumppu tai pistooli, tärkeää on että PST-merkkainta saa kannettua hihnassa tai kotelossa silloin kun sitä ei tarvitse. \nPST-pelaajan kuulamäärä on rajoitettu. Ajoneuvot PST-pelaaja pysäyttää ampumalla niitä tuulilasiin tai ajoneuvoon kiinnitettyyn pleksin palaan. Tehokas PST-pelaajan käyttö edellyttää yhteistyötä oman ryhmän ja sektorinjohtajan kanssa.\nSektorinjohtaja ilmoittaa maaleista ja oma ryhmä suojaa PST-pelaajan etenemistä ampumisetäisyydelle. PST-pelaajan tavaramerkkejä ovat rauhallisuus, tarkat osumat sekä kyky käyttää kaikkia mahdollisia maastossa olevia suojia hyväkseen. PST-pelaajan rooli on monesti ratkaisevassa asemassa puolustustaisteluissa.</string>
 
     <string name="medic_rule">Lääkintämies toimii skenaariosääntöjen puitteissa pelaajia osuman jälkeen "parantavana" pelaajana. Lääkintämies kantaa hihassaan lääkintämiestehtävästi kertovaa tunnistusmerkkiä.\nParantaminen tapahtuu käytännössä maalin pyyhkimisellä pois varusteista ja ottamalla parannettavalta pelaajalta vihreä hihanauha pois. Saatuaan toisen osuman tämän jälkeen pelaajaa ei voi enää parantaa. Lääkintämiehellä ei ensiapukorttia ole, joten hän putoaa pelistä pois jo ensimmäisestä osumasta.\nLääkintämiehelle on etua nopeista jaloista ja kyvystä edetä eteenpäin käyttäen maaston tarjoamaa suojaa. Lääkintämiehet ovat ratkaisesseet toiminnallaan monesti tiukat pelitilanteet sekä myös poissaolollaan tuominneet jäljelle jääneet omat pelaajat karvaaseen tappioon!\nMoni lääkintämiehenä pelaava on havainnut paremmaksi pelata ilman merkkainta, sillä se nopeuttaa ja helpottaa liikkumista. Lääkintämiehen tärkein tehtävä on pitää omat mahdollisimman tehokkaasti mukana pelissä ja haavoittuneet työllistävät lääkintämiestä niin paljon, että aikaa ampumiselle ei juuri jää. Parhaiten menestyneet lääkintämiehet on perinteisesti palkittu pelin jälkeen päätöstilaisuudessa!</string>

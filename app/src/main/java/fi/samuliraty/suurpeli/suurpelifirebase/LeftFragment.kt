@@ -144,19 +144,23 @@ class LeftFragment : Fragment() {
      */
     private val updatePaused: Runnable = object: Runnable {
         override fun run() {
-            val delayMS: Long = 1000
+            val delayMS: Long = 10000
+            // divided by 1000 because we want seconds, timeLeft is seconds by now
             timeLeft -= delayMS/1000
-            pHandler.postDelayed(this, delayMS)
             //update the contentText of the notification!!
+            pHandler.postDelayed(this, delayMS)
             jBuilder?.setContentText(convertTime(timeLeft))
 
             //if timer reaches 0 stop updating and dismiss notification
             if(timeLeft <= 0){
-                jManager?.cancel(TimerNotificationID)
                 pHandler.removeCallbacks(this)
+                jManager?.cancel(TimerNotificationID)
             }
-            //push notification
-            jManager?.notify(TimerNotificationID, jBuilder?.build())
+            else
+            {
+                //push notification
+                jManager?.notify(TimerNotificationID, jBuilder?.build())
+            }
         }
     }
 

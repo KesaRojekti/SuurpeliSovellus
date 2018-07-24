@@ -14,10 +14,6 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
 
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -51,8 +47,9 @@ class MainActivity : AppCompatActivity() {
                 if (usr == null){
                     val loginIntent: Intent = Intent(this@MainActivity, SigninActivity::class.java)
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                    startActivity(loginIntent)
-                    finish()
+                    //uncomment these if you are using login again
+                    //startActivity(loginIntent)
+                    //finish()
                 }
             }
         }
@@ -73,42 +70,6 @@ class MainActivity : AppCompatActivity() {
 
         container.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabs))
         tabs.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(container))
-
-
-        val database = FirebaseDatabase.getInstance()
-        //getReference = taulun nimi
-        val myRef = database.getReference("message")
-        val timerValue = database.getReference("targetTime")
-
-        //write text into the database
-        changeTextButton.setOnClickListener { _ ->
-            myRef.setValue("hello")
-        }
-
-        //write different text into the database
-        timerButton.setOnClickListener { _ ->
-            myRef.setValue("world")
-            //current time +90 mins
-            timerValue.setValue(System.currentTimeMillis()+5400000)
-        }
-
-
-        //check for changes in the realtime database
-        val listener = object : ValueEventListener {
-            override fun onDataChange(data: DataSnapshot) {
-                val value = data.value
-                dbText.text = "" + value
-            }
-
-            override fun onCancelled(data: DatabaseError) {
-                Log.d("listener", "failed")
-            }
-
-        }
-
-        //add value change listener
-        myRef.addValueEventListener(listener)
-
     }
 
 
@@ -133,15 +94,19 @@ class MainActivity : AppCompatActivity() {
      * Back button functions
      */
     override fun onBackPressed() {
+        //comment the super call if you are using login system again
         //super.onBackPressed()
 
         //check if you are logged in or not
         //if you are not close the app
         //if you are move the app to the background for the notifications
+        /* uncomment these if you are using login system again
         val mUser: FirebaseUser? = auth.currentUser
         if(mUser != null){
             moveTaskToBack(true)
         }
+        */
+        moveTaskToBack(true)
 
     }
 

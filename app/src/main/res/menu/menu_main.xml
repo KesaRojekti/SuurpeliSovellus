@@ -10,7 +10,7 @@
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="101"
-        android:title="@string/logout_text"
+        android:title="@string/exit_text"
         app:showAsAction="never"
         />
 </menu>
