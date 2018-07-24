@@ -2,7 +2,7 @@
 <head>
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Suurpeli Objectives</title>
+  <title>Firebase Authentication Example</title>
   <link rel="stylesheet" href="css/main.css">
 
     <!--include firebase-->
@@ -102,12 +102,16 @@
       window.location.href="index.html";
     }
 
+ 
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKT-fu4FeCH4iehwP2tJP6CpZfGokWXFc&callback=initMap">
     </script>
   </head>
   <body>
     <nav>
         <button class="navButton" onclick="navIndex()">Index</button>
-        <button class="navButton" onclick="navLiput()">Objectives</button>
+        <button class="navButton" onclick="navLiput()">Liput</button>
         <button class="navButton" onclick="navNews()">News</button>
     </nav>
     <main>
@@ -123,6 +127,9 @@
       <button onclick="clearFlags()">Clear flags</button>
       <button onclick="activateNextFlag()">Activate next flag</button>
       <button onclick="deactivateLastFlag()">Deactivate last true</button>
+      <button id = "update" onclick="UpdateFlags()">Update flag postitions</button>
+      <div id="map"></div>
+      
       <table id="lippuData"></table>
     </main>
   </body>
