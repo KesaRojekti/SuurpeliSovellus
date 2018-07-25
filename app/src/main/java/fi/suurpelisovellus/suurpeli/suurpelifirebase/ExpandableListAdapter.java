@@ -1,4 +1,4 @@
-package fi.samuliraty.suurpeli.suurpelifirebase;
+package fi.suurpelisovellus.suurpeli.suurpelifirebase;
 
 import android.content.Context;
 import android.graphics.Typeface;

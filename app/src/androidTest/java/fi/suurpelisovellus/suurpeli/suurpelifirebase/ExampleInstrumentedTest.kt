@@ -1,4 +1,4 @@
-package fi.samuliraty.suurpeli.suurpelifirebase
+package fi.suurpelisovellus.suurpeli.suurpelifirebase
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

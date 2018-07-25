@@ -40,4 +40,5 @@ Komentajana toimiminen on haastaavaa, mutta palkitsevaa. Johtotehtävissä pelin
     </string-array>
 
     <string name="settings_notifications_key">notificationKey</string>
+    <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCh0taS3fKAw2gLYMsrFgK4ZRBjqAyd8r4</string>
 </resources>
