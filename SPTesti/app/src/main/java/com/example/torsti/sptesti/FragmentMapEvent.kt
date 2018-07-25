@@ -21,17 +21,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
+import android.widget.Toast
+import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
-import com.google.android.gms.maps.model.LatLng
-import com.google.android.gms.maps.model.Marker
-import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.gms.maps.model.*
 import com.google.firebase.FirebaseApp
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.layout_map_event.*
 import org.jetbrains.anko.doAsync
 import org.jetbrains.anko.uiThread
@@ -43,43 +38,85 @@ class FragmentMapEvent: Fragment(),
         View.OnClickListener {
 
 
-    private lateinit var stringObjectives: String
     private lateinit var mView: View
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
-    private lateinit var webApp: ServerConnection
     private lateinit var btnRefresh: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
-    private var latitude: Double = 0.0
-    private var longitude: Double = 0.0
-    private var listLocationsList = mutableListOf<LatLng>()
+    private lateinit var marker: Marker
+    private var markerOptions: MarkerOptions = MarkerOptions()
+    private lateinit var myLocation: Marker
+    private lateinit var lippu: Lippu
+    private lateinit var lippuKey: String
+    private lateinit var newLippu: Lippu
+    private lateinit var newLippuKey: String
+    private lateinit var removedLippu: Lippu
+    private lateinit var removedLippuKey: String
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var listLocationList: MutableList<Location>
+    private lateinit var currentLocation: Location
+    private var requestingLocationUpdates:Boolean = true
+
     private var listMarkersList = mutableListOf<Marker>()
-    private var listObjectivesList = mutableListOf<String>()
-    private var listDataBreakDown = mutableListOf<String>()
-    private var listSplitDataList = mutableListOf<String>()
-    private var listCheckList = mutableListOf<LatLng>()
-    private var intObjectiveCount = 1
-    private var MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION:Int = 1
-    private val database = FirebaseDatabase.getInstance()
-    private val timerValue = database.getReference("lippu1")
-    private val timerValue2 = database.getReference("lippu2")
-    private val valueListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-            Log.d("LeftFragValueListener", "no go")
+    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
+    private val childEventListener = object : ChildEventListener{
+        override fun onChildAdded(dataSnapShot: DataSnapshot, previousChildName: String?) {
+            lippu = dataSnapShot.getValue(Lippu::class.java)!!
+
+            lippuKey = dataSnapShot.key!!
+
+            marker = mMap.addMarker(MarkerOptions()
+                    .title(lippuKey)
+                    .position(lippu.getMarkerLocation()))
+
+            marker.isVisible = lippu.active
+            marker.tag = lippuKey
+            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+            listMarkersList.add(marker)
+            manageObjectives()
+
         }
 
-        override fun onDataChange(data: DataSnapshot) {
-            val value: String = data.value.toString()
-            if(!listObjectivesList.contains(value)){
-                listObjectivesList.add(value)
-                listSplitDataList = value.split(",") as MutableList<String>
-                listLocationsList.add(LatLng(listSplitDataList[0].toDouble(),listSplitDataList[1].toDouble()))
-                listSplitDataList.clear()
+        override fun onChildChanged(dataSnapShot: DataSnapshot, previousChildName: String?) {
+            if (dataSnapShot.exists()) {
+                newLippu = dataSnapShot.getValue(Lippu::class.java)!!
+                newLippuKey = dataSnapShot.key!!
+
+                for (listedMarker: Marker in listMarkersList) {
+                    if (listedMarker.tag == newLippuKey) {
+                        listedMarker.title = newLippuKey
+                        listedMarker.position = newLippu.getMarkerLocation()
+                        listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    }
+                }
+                manageObjectives()
             }
         }
-    }
-    var dataReady: Boolean = false
 
+        override fun onCancelled(databaseError: DatabaseError) {
+            testi.text = "Database Error"
+        }
+
+        override fun onChildMoved(p0: DataSnapshot, p1: String?) {
+            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        }
+
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
+            removedLippu = dataSnapshot.getValue(Lippu::class.java)!!
+            removedLippuKey = dataSnapshot.key!!
+            testi.text = "Key is: " + removedLippuKey
+            var indexRemoveItem = 0
+            for((index, listedMarker: Marker) in listMarkersList.withIndex()){
+                if (listedMarker.tag == removedLippuKey){
+                    listedMarker.remove()
+                    indexRemoveItem = index
+                }
+            }
+            listMarkersList.removeAt(indexRemoveItem)
+            manageObjectives()
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.layout_map_event, container, false)
@@ -97,75 +134,63 @@ class FragmentMapEvent: Fragment(),
                     ?.commit()
         }
         mapFragment.getMapAsync(this)
+
+        locationCallback = object : LocationCallback() {
+            override fun onLocationResult(locationResult: LocationResult?) {
+                if (locationResult != null) {
+                    listLocationList = locationResult!!.locations
+                    if (listLocationList.size != 0){
+                        currentLocation = listLocationList[listLocationList.size -  1]
+
+                        var latitudeLongitude = LatLng(currentLocation.latitude, currentLocation.longitude)
+
+                        if(markerOptions.position != null){
+                            myLocation.remove()
+                        }
+
+                        myLocation = mMap.addMarker(MarkerOptions()
+                                .position(latitudeLongitude)
+                                .title("My Location"))
+
+                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
+                        markerOptions.position(latitudeLongitude)
+                    }
+                }
+            }
+        }
         return mView
     }
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+
+        val locationRequest = LocationRequest().apply {
+            interval = 10000
+            fastestInterval = 10000
+            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+        }
+
         if (ContextCompat.checkSelfPermission(this.context!!,
-                        android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_COARSE_LOCATION),
-                    MY_PERMISSIONS_REQUEST_ACCESS_COARSE_LOCATION)
+                        android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                    MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
         }else {
 
         }
-        fusedLocationClient.lastLocation
-                    .addOnSuccessListener { location: Location? ->
-                        var latitudeLongitude = LatLng(location!!.latitude, location.longitude)
-                        mMap.addMarker(MarkerOptions().position(latitudeLongitude).title("It is MEEEEE!!"))
-                        mMap.moveCamera(CameraUpdateFactory.newLatLng(latitudeLongitude))
-                        mMap.setMinZoomPreference(6f)
-                        mMap.setMaxZoomPreference(14f)
-                    }
-        timerValue.addValueEventListener(valueListener)
-        timerValue2.addValueEventListener(valueListener)
+        fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
+        mDatabaseReference.addChildEventListener(childEventListener)
     }
 
-    /**
-     * Method used to obtaining a set of coordinates from a server
-     *
-     * This method fetches a set of coordinates in the form of a single string from the server given in the method.
-     * Once the string has been retrieved, it is first split into sets of coordinates that are saved
-     * in the listObjectivesList. Due to the split process, the first entry to listObjectivesList is
-     * empty, and thus will be removed before proceeding further, inorder to avoid errors.
-     *
-     * Additional modification is then applied to remove redundant characters from the string items in listObjectivesList,
-     * before they are saved in listDataBreakdown. The items in listDataBreakdown are split into variables Latitude,
-     * and Longitude, then converted to double and saved as LatLng in the variable newLatLng, which is then saved
-     * in listCoordinates.
-     */
     /*override fun onResume() {
         super.onResume()
-        /*server.settings.javaScriptEnabled = true
-        webApp = ServerConnection(this.context)
-        server.addJavascriptInterface(webApp, "Android")
-        server.loadUrl("http://suurpeli.samuliraty.fi/testi/markerfeed.php")
-        doAsync {
-            while (!dataReady) {
-                dataReady = webApp.serverReady
-            }
-            if (dataReady) {
-                uiThread {
-                    stringObjectives = webApp.marker
-                    listObjectivesList = stringObjectives
-                            .split("Lippu") as MutableList<String>
-                    listObjectivesList.removeAt(0)
 
-                    for (item in listObjectivesList) {
-                        listDataBreakDown.add(item.substring(2))
-                    }
-                    for (item in listDataBreakDown) {
-                        listSplitData = item.split(",") as MutableList<String>
-                        latitude = listSplitData[0].toDouble()
-                        longitude = listSplitData[1].toDouble()
-                        var newLatLng = LatLng(latitude, longitude)
-                        listCoordinates.add(newLatLng)
-                        listSplitData.clear()
-                    }
-                    //testi.text = "List value is:" + listCoordinates[0] + " ; " + listCoordinates[1]
-                }
-            }
-        }*/
+    }*/
+
+    /*override fun onPause() {
+        super.onPause()
+        if (fusedLocationClient != null) {
+            fusedLocationClient.removeLocationUpdates(locationCallback)
+        }
     }*/
 
     /**
@@ -180,15 +205,28 @@ class FragmentMapEvent: Fragment(),
      */
 
     override fun onClick(btnRefresh: View) {
-        for(LatLng in listLocationsList){
-            if(!listCheckList.contains(LatLng)){
-                listCheckList.add(LatLng)
-                listMarkersList.add(mMap.addMarker(MarkerOptions()
-                        .position(LatLng)
-                        .title("Objective " + intObjectiveCount)))
-                intObjectiveCount++
-            }
-        }
 
     }
+
+    fun manageObjectives(){
+        var intListIndexCounter = 0
+
+        for(listedMarker: Marker in listMarkersList) {
+            listedMarker.snippet = "Objective Captured"
+            if(!listedMarker.isVisible){
+                listMarkersList[intListIndexCounter -1]
+                        .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                listMarkersList[intListIndexCounter -1].snippet = "Current Objective"
+                listMarkersList[intListIndexCounter -1].showInfoWindow()
+            }
+            intListIndexCounter++
+        }
+    }
+    /*fun createLocationRequest(){
+        val locationRequest = LocationRequest().apply {
+            interval = 10000
+            fastestInterval = 10000
+            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+    }*/
 }
