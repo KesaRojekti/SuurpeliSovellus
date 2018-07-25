@@ -8,7 +8,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.os.Bundle
-import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
@@ -38,7 +37,6 @@ class MainActivity : AppCompatActivity() {
 
         //get current user
         val user:FirebaseUser? = auth.currentUser
-        Log.d("MainActivity user", "" + user)
 
         //add listener to the user -> if you log out start login activity again
         val authListener = object : FirebaseAuth.AuthStateListener {
@@ -86,7 +84,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        Log.d("MainActivity.onDestroy", "destroyed")
         finish()
     }
 

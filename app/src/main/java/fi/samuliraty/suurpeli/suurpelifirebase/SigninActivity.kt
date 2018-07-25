@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.auth.AuthResult
@@ -126,11 +125,5 @@ class SigninActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration?) {
         super.onConfigurationChanged(newConfig)
         val restart: Intent = Intent(this@SigninActivity, MainActivity::class.java)
-        if(newConfig?.orientation == Configuration.ORIENTATION_LANDSCAPE){
-            Log.d("it fires", "configChanged")
-        }
-        else if(newConfig?.orientation == Configuration.ORIENTATION_PORTRAIT){
-            Log.d("it fires", "configChanged")
-        }
     }
 }

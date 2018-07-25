@@ -4,7 +4,6 @@ package fi.samuliraty.suurpeli.suurpelifirebase
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -64,7 +63,6 @@ class ChildFragment : Fragment() {
         }
 
         override fun onCancelled(p0: DatabaseError) {
-            Log.d("newsListener", "failed")
         }
 
         override fun onChildAdded(data: DataSnapshot, p1: String?) {
@@ -72,11 +70,9 @@ class ChildFragment : Fragment() {
             val news: News? = data.getValue(News::class.java)
             news?.title = data.key
             newsList.add(news!!)
-            //Log.d("onChildAdded", "added: " + news.title + news.content + news.author)
         }
 
         override fun onChildChanged(data: DataSnapshot, p1: String?) {
-            Log.d("childChanged", data.key)
             //returns the child that got changed
             //TODO: change the object in newsList
         }
@@ -84,7 +80,6 @@ class ChildFragment : Fragment() {
         override fun onChildRemoved(data: DataSnapshot) {
             //returns the child which got deleted
             //TODO: remove the object from newsList
-            Log.d("childRemoved", data.key)
         }
 
 

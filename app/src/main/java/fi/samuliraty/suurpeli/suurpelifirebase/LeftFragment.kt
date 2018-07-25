@@ -10,7 +10,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -60,7 +59,6 @@ class LeftFragment : Fragment() {
      */
     private val valueListener = object :  ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.d("LeftFragValueListener", "no go")
         }
 
         override fun onDataChange(data: DataSnapshot) {
@@ -74,7 +72,6 @@ class LeftFragment : Fragment() {
 
     private val lippuData: ValueEventListener = object : ValueEventListener {
         override fun onCancelled(p0: DatabaseError) {
-            Log.d("lippuData","failed")
         }
 
         override fun onDataChange(data: DataSnapshot) {
@@ -184,7 +181,6 @@ class LeftFragment : Fragment() {
 
         //start pushing notification if necessary
         if(timeLeft > 0 && showNotifications!!){
-            Log.d("showNotifications", "" + showNotifications)
             updatePaused.run()
         }
         //create notification manager
