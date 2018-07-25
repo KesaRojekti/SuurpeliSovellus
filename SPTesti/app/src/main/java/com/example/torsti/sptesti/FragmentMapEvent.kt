@@ -10,6 +10,7 @@ import android.location.LocationListener
 import android.location.LocationManager
 import android.location.LocationProvider
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
@@ -60,6 +61,7 @@ class FragmentMapEvent: Fragment(),
     private var listMarkersList = mutableListOf<Marker>()
     private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
     private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
+
     private val childEventListener = object : ChildEventListener{
         override fun onChildAdded(dataSnapShot: DataSnapshot, previousChildName: String?) {
             lippu = dataSnapShot.getValue(Lippu::class.java)!!
@@ -75,7 +77,6 @@ class FragmentMapEvent: Fragment(),
             marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
             listMarkersList.add(marker)
             manageObjectives()
-
         }
 
         override fun onChildChanged(dataSnapShot: DataSnapshot, previousChildName: String?) {
@@ -87,6 +88,7 @@ class FragmentMapEvent: Fragment(),
                     if (listedMarker.tag == newLippuKey) {
                         listedMarker.title = newLippuKey
                         listedMarker.position = newLippu.getMarkerLocation()
+                        listedMarker.isVisible = newLippu.active
                         listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     }
                 }
@@ -105,16 +107,18 @@ class FragmentMapEvent: Fragment(),
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
             removedLippu = dataSnapshot.getValue(Lippu::class.java)!!
             removedLippuKey = dataSnapshot.key!!
-            testi.text = "Key is: " + removedLippuKey
             var indexRemoveItem = 0
             for((index, listedMarker: Marker) in listMarkersList.withIndex()){
                 if (listedMarker.tag == removedLippuKey){
                     listedMarker.remove()
                     indexRemoveItem = index
+                    listedMarker.tag
                 }
             }
             listMarkersList.removeAt(indexRemoveItem)
             manageObjectives()
+            testi.text = "input: " + listMarkersList[1].title
+
         }
     }
 
@@ -152,7 +156,7 @@ class FragmentMapEvent: Fragment(),
                                 .position(latitudeLongitude)
                                 .title("My Location"))
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
                         markerOptions.position(latitudeLongitude)
                     }
                 }
@@ -181,10 +185,9 @@ class FragmentMapEvent: Fragment(),
         mDatabaseReference.addChildEventListener(childEventListener)
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
-
-    }*/
+    }
 
     /*override fun onPause() {
         super.onPause()
@@ -209,19 +212,26 @@ class FragmentMapEvent: Fragment(),
     }
 
     fun manageObjectives(){
-        var intListIndexCounter = 0
+        if(listMarkersList.size > 0) {
+            var intListIndexCounter = 0
 
-        for(listedMarker: Marker in listMarkersList) {
-            listedMarker.snippet = "Objective Captured"
-            if(!listedMarker.isVisible){
-                listMarkersList[intListIndexCounter -1]
-                        .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
-                listMarkersList[intListIndexCounter -1].snippet = "Current Objective"
-                listMarkersList[intListIndexCounter -1].showInfoWindow()
+            for (listedMarker: Marker in listMarkersList) {
+                listedMarker.snippet = "Objective Captured"
+
+                if (listedMarker.isVisible == false && intListIndexCounter >=1) {
+                    listMarkersList[intListIndexCounter - 1]
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                    listMarkersList[intListIndexCounter - 1].snippet = "Current Objective"
+                    listMarkersList[intListIndexCounter - 1].showInfoWindow()
+                }else if (intListIndexCounter >= 1) {
+                    listMarkersList[intListIndexCounter - 1]
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                }
+                intListIndexCounter++
             }
-            intListIndexCounter++
         }
     }
+
     /*fun createLocationRequest(){
         val locationRequest = LocationRequest().apply {
             interval = 10000
