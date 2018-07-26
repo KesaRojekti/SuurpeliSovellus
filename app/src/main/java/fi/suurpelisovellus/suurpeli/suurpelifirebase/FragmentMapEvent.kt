@@ -12,7 +12,6 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -51,12 +50,12 @@ class FragmentMapEvent: Fragment(),
     private lateinit var locationCallback: LocationCallback
     private lateinit var listLocationList: MutableList<Location>
     private lateinit var currentLocation: Location
-    private var requestingLocationUpdates:Boolean = true
+    private var requestingLocationUpdates: Boolean = true
 
     private var listMarkersList = mutableListOf<Marker>()
-    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
-    private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
-    private val childEventListener = object : ChildEventListener{
+    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: Int = 1
+    private var mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
+    private val childEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapShot: DataSnapshot, previousChildName: String?) {
             lippu = dataSnapShot.getValue(Lippu::class.java)!!
 
@@ -83,15 +82,17 @@ class FragmentMapEvent: Fragment(),
                     if (listedMarker.tag == newLippuKey) {
                         listedMarker.title = newLippuKey
                         listedMarker.position = newLippu.getMarkerLocation()
+                        listedMarker.isVisible = newLippu.active
                         listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                     }
                 }
                 manageObjectives()
+                //testi.text = "input: " + listMarkersList.size
             }
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-            testi.text = "Database Error"
+            //testi.text = "Database Error"
         }
 
         override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -101,10 +102,10 @@ class FragmentMapEvent: Fragment(),
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
             removedLippu = dataSnapshot.getValue(Lippu::class.java)!!
             removedLippuKey = dataSnapshot.key!!
-            testi.text = "Key is: " + removedLippuKey
+            //testi.text = "Key is: " + removedLippuKey
             var indexRemoveItem = 0
-            for((index, listedMarker: Marker) in listMarkersList.withIndex()){
-                if (listedMarker.tag == removedLippuKey){
+            for ((index, listedMarker: Marker) in listMarkersList.withIndex()) {
+                if (listedMarker.tag == removedLippuKey) {
                     listedMarker.remove()
                     indexRemoveItem = index
                 }
@@ -135,12 +136,12 @@ class FragmentMapEvent: Fragment(),
             override fun onLocationResult(locationResult: LocationResult?) {
                 if (locationResult != null) {
                     listLocationList = locationResult!!.locations
-                    if (listLocationList.size != 0){
-                        currentLocation = listLocationList[listLocationList.size -  1]
+                    if (listLocationList.size != 0) {
+                        currentLocation = listLocationList[listLocationList.size - 1]
 
                         var latitudeLongitude = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-                        if(markerOptions.position != null){
+                        if (markerOptions.position != null) {
                             myLocation.remove()
                         }
 
@@ -170,7 +171,7 @@ class FragmentMapEvent: Fragment(),
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
-        }else {
+        } else {
 
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
@@ -205,24 +206,23 @@ class FragmentMapEvent: Fragment(),
     }
 
     fun manageObjectives(){
-        var intListIndexCounter = 0
+        if(listMarkersList.size > 0) {
+            var intListIndexCounter = 0
 
-        for(listedMarker: Marker in listMarkersList) {
-            listedMarker.snippet = "Objective Captured"
-            if(!listedMarker.isVisible){
-                listMarkersList[intListIndexCounter -1]
-                        .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
-                listMarkersList[intListIndexCounter -1].snippet = "Current Objective"
-                listMarkersList[intListIndexCounter -1].showInfoWindow()
+            for (listedMarker: Marker in listMarkersList) {
+                listedMarker.snippet = "Objective Captured"
+                if (!listedMarker.isVisible && intListIndexCounter >=1) {
+                    listMarkersList[intListIndexCounter - 1]
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                    listMarkersList[intListIndexCounter - 1].snippet = "Current Objective"
+                    listMarkersList[intListIndexCounter - 1].showInfoWindow()
+                }else if(intListIndexCounter >= 1){
+                    listMarkersList[intListIndexCounter - 1]
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                }
+                intListIndexCounter++
             }
-            intListIndexCounter++
+
         }
     }
-    /*fun createLocationRequest(){
-        val locationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 10000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        }
-    }*/
 }

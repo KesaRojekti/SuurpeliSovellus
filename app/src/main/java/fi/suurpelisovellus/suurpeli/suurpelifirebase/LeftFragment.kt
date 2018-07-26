@@ -219,6 +219,7 @@ class LeftFragment : Fragment() {
         mHandler.removeCallbacks(updateTimer)
         //dismiss timer notification
         jManager?.cancel(TimerNotificationID)
+
     }
 
     /**
