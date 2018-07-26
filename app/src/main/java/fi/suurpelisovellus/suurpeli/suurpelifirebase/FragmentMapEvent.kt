@@ -33,6 +33,7 @@ class FragmentMapEvent: Fragment(),
         View.OnClickListener {
 
 
+    private lateinit var eventGroundOverlay: GroundOverlay
     private lateinit var mView: View
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
@@ -40,59 +41,59 @@ class FragmentMapEvent: Fragment(),
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var marker: Marker
     private var markerOptions: MarkerOptions = MarkerOptions()
+    private var eventOverlayOnOff: Boolean = true
+    private var eventLatLngBounds: LatLngBounds = LatLngBounds(
+            LatLng(60.166667, 23.868056),
+            LatLng(61.192059, 27.945831))
     private lateinit var myLocation: Marker
-    private lateinit var lippu: Lippu
-    private lateinit var lippuKey: String
-    private lateinit var newLippu: Lippu
-    private lateinit var newLippuKey: String
-    private lateinit var removedLippu: Lippu
-    private lateinit var removedLippuKey: String
     private lateinit var locationCallback: LocationCallback
     private lateinit var listLocationList: MutableList<Location>
     private lateinit var currentLocation: Location
-    private var requestingLocationUpdates: Boolean = true
+    private var requestingLocationUpdates:Boolean = true
 
     private var listMarkersList = mutableListOf<Marker>()
-    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION: Int = 1
-    private var mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
-    private val childEventListener = object : ChildEventListener {
+    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
+
+    private val childEventListener = object : ChildEventListener{
         override fun onChildAdded(dataSnapShot: DataSnapshot, previousChildName: String?) {
-            lippu = dataSnapShot.getValue(Lippu::class.java)!!
+            val lippu: Lippu? = dataSnapShot.getValue(Lippu::class.java)
+            if(lippu != null) {
+                val lippuKey = dataSnapShot.key!!
 
-            lippuKey = dataSnapShot.key!!
+                marker = mMap.addMarker(MarkerOptions()
+                        .title(lippuKey)
+                        .position(lippu.getMarkerLocation()))
 
-            marker = mMap.addMarker(MarkerOptions()
-                    .title(lippuKey)
-                    .position(lippu.getMarkerLocation()))
-
-            marker.isVisible = lippu.active
-            marker.tag = lippuKey
-            marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-            listMarkersList.add(marker)
-            manageObjectives()
-
+                marker.isVisible = lippu.active
+                marker.tag = lippuKey
+                marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                listMarkersList.add(marker)
+                manageObjectives()
+            }
         }
 
         override fun onChildChanged(dataSnapShot: DataSnapshot, previousChildName: String?) {
             if (dataSnapShot.exists()) {
-                newLippu = dataSnapShot.getValue(Lippu::class.java)!!
-                newLippuKey = dataSnapShot.key!!
+                val newLippu: Lippu? = dataSnapShot.getValue(Lippu::class.java)
+                if(newLippu != null) {
+                    val newLippuKey = dataSnapShot.key!!
 
-                for (listedMarker: Marker in listMarkersList) {
-                    if (listedMarker.tag == newLippuKey) {
-                        listedMarker.title = newLippuKey
-                        listedMarker.position = newLippu.getMarkerLocation()
-                        listedMarker.isVisible = newLippu.active
-                        listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    for (listedMarker: Marker in listMarkersList) {
+                        if (listedMarker.tag == newLippuKey) {
+                            listedMarker.title = newLippuKey
+                            listedMarker.position = newLippu.getMarkerLocation()
+                            listedMarker.isVisible = newLippu.active
+                            listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        }
                     }
+                    manageObjectives()
                 }
-                manageObjectives()
-                //testi.text = "input: " + listMarkersList.size
             }
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-            //testi.text = "Database Error"
+
         }
 
         override fun onChildMoved(p0: DataSnapshot, p1: String?) {
@@ -100,18 +101,22 @@ class FragmentMapEvent: Fragment(),
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-            removedLippu = dataSnapshot.getValue(Lippu::class.java)!!
-            removedLippuKey = dataSnapshot.key!!
-            //testi.text = "Key is: " + removedLippuKey
-            var indexRemoveItem = 0
-            for ((index, listedMarker: Marker) in listMarkersList.withIndex()) {
-                if (listedMarker.tag == removedLippuKey) {
-                    listedMarker.remove()
-                    indexRemoveItem = index
+            val removedLippu: Lippu? = dataSnapshot.getValue(Lippu::class.java)
+            if(removedLippu!= null) {
+                val removedLippuKey = dataSnapshot.key!!
+                var indexRemoveItem = 0
+
+                for ((index, listedMarker: Marker) in listMarkersList.withIndex()) {
+                    if (listedMarker.tag == removedLippuKey) {
+                        listedMarker.remove()
+                        indexRemoveItem = index
+                        listedMarker.tag
+                    }
                 }
+
+                listMarkersList.removeAt(indexRemoveItem)
+                manageObjectives()
             }
-            listMarkersList.removeAt(indexRemoveItem)
-            manageObjectives()
         }
     }
 
@@ -136,12 +141,12 @@ class FragmentMapEvent: Fragment(),
             override fun onLocationResult(locationResult: LocationResult?) {
                 if (locationResult != null) {
                     listLocationList = locationResult!!.locations
-                    if (listLocationList.size != 0) {
-                        currentLocation = listLocationList[listLocationList.size - 1]
+                    if (listLocationList.size != 0){
+                        currentLocation = listLocationList[listLocationList.size -  1]
 
                         var latitudeLongitude = LatLng(currentLocation.latitude, currentLocation.longitude)
 
-                        if (markerOptions.position != null) {
+                        if(markerOptions.position != null){
                             myLocation.remove()
                         }
 
@@ -149,7 +154,7 @@ class FragmentMapEvent: Fragment(),
                                 .position(latitudeLongitude)
                                 .title("My Location"))
 
-                        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
+                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
                         markerOptions.position(latitudeLongitude)
                     }
                 }
@@ -161,6 +166,12 @@ class FragmentMapEvent: Fragment(),
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
+        eventGroundOverlay = mMap.addGroundOverlay(GroundOverlayOptions().apply {
+            image(BitmapDescriptorFactory.fromAsset("SP18.jpg"))
+            positionFromBounds(eventLatLngBounds)
+            //Coordinates of Jämsä: LatLng(61.166667, 23.868056)
+        })
+
         val locationRequest = LocationRequest().apply {
             interval = 10000
             fastestInterval = 10000
@@ -171,17 +182,16 @@ class FragmentMapEvent: Fragment(),
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
                     MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION)
-        } else {
+        }else {
 
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
     }
 
-    /*override fun onResume() {
+    override fun onResume() {
         super.onResume()
-
-    }*/
+    }
 
     /*override fun onPause() {
         super.onPause()
@@ -201,8 +211,18 @@ class FragmentMapEvent: Fragment(),
      * Markers are named in an ascending order in the sequence they are created.
      */
 
-    override fun onClick(btnRefresh: View) {
-
+    override fun onClick(btnEventGroundOverlayOnOff: View) {
+        //Not functional yet
+        /*if(eventOverlayOnOff) {
+            eventGroundOverlay.isVisible = false
+            eventOverlayOnOff = false
+            button.text = "Event Overlay: OFF"
+        } else {
+            eventGroundOverlay.isVisible = true
+            eventOverlayOnOff = true
+            button.text = "Event Overlay: ON"
+            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
+        }*/
     }
 
     fun manageObjectives(){
@@ -211,18 +231,26 @@ class FragmentMapEvent: Fragment(),
 
             for (listedMarker: Marker in listMarkersList) {
                 listedMarker.snippet = "Objective Captured"
-                if (!listedMarker.isVisible && intListIndexCounter >=1) {
+
+                if (listedMarker.isVisible == false && intListIndexCounter >= 1) {
                     listMarkersList[intListIndexCounter - 1]
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
                     listMarkersList[intListIndexCounter - 1].snippet = "Current Objective"
                     listMarkersList[intListIndexCounter - 1].showInfoWindow()
-                }else if(intListIndexCounter >= 1){
+                }else if (intListIndexCounter >= 1) {
                     listMarkersList[intListIndexCounter - 1]
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 }
                 intListIndexCounter++
             }
-
         }
     }
+
+    /*fun createLocationRequest(){
+        val locationRequest = LocationRequest().apply {
+            interval = 10000
+            fastestInterval = 10000
+            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+        }
+    }*/
 }
