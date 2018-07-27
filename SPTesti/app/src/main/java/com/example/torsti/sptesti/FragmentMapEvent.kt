@@ -193,10 +193,15 @@ class FragmentMapEvent: Fragment(),
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
+        // Set the map layout to display the eventGroundOverlay
+        mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
+        mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
+        mMap.setMinZoomPreference(7f)
     }
 
     override fun onResume() {
         super.onResume()
+
     }
 
     /*override fun onPause() {
@@ -219,17 +224,22 @@ class FragmentMapEvent: Fragment(),
 
     override fun onClick(btnEventGroundOverlayOnOff: View) {
         //Not functional yet
-        /*if(eventOverlayOnOff) {
+        if(eventOverlayOnOff) {
             eventGroundOverlay.isVisible = false
             eventOverlayOnOff = false
+            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL)
             button.text = "Event Overlay: OFF"
-
+            mMap.setLatLngBoundsForCameraTarget(null)
+            mMap.setMinZoomPreference(2f)
         } else {
             eventGroundOverlay.isVisible = true
             eventOverlayOnOff = true
+            mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
             button.text = "Event Overlay: ON"
+            mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
             mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
-        }*/
+            mMap.setMinZoomPreference(7f)
+        }
     }
 
     fun manageObjectives(){
