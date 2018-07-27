@@ -81,8 +81,6 @@ class ChildFragment : Fragment() {
             //returns the child which got deleted
             //TODO: remove the object from newsList
         }
-
-
     }
 
     //create a runnable which updates the news every X milliseconds
@@ -266,7 +264,4 @@ class ChildFragment : Fragment() {
         //stop cycling the news when the fragment is not visible
         newsHandler.removeCallbacks(newsUpdater)
     }
-
-
-
 }
