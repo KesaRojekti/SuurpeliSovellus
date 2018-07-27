@@ -6,7 +6,6 @@ class Lippu {
     
 }
 
-  
   function checkAdmin(user){
   var adminRef = firebase.database().ref("admin");
   adminRef.once("value", function(snapshot){
@@ -65,13 +64,14 @@ function getLippuData(){
 }
 
 //add a flag
+var flagsArrayCont;
  var marker = [];
  function pushTest(){
    marker = new google.maps.Marker({position: start, map: map, draggable: true});
   writeLippuData(lippuarray);
 }
  //Google maps
-    var map, i =0;
+    var map, count =0;
     var start = {lat: 61.81555994553038, lng: 25.17069664313044};
     var overlay;
     
@@ -79,27 +79,21 @@ function getLippuData(){
 
     function initMap() { 
       console.log(marker.length);
-console.log(i);
+console.log(count);
     map = new google.maps.Map(
       document.getElementById('map'), {zoom: 17,
        center: start,
       mapTypeId: `satellite`});
-     /* 
-      var bounds = new google.maps.LatLngBounds(
-        new google.maps.LatLng(25.173700920129477, 25.167800060296713),
-        new google.maps.LatLng(61.81690049832376, 25.173700920129477));
-        var image = `https://paintball.fi/data/media/0/0/Ning_Media/blogs/1/1559_blogs.jpg`;
-
-        overlay = new SuurpeliZone(bounds, image, map);
-*/
+   
+      
       map.addListener('click', function(e) {
 
         var location = e.latLng;
+        
         marker.push(new google.maps.Marker({position: location,
            map: map,
             draggable: true,
           icon: pinSymbol("#FFF")}));
-          marker[0].setIcon(pinSymbol("#FF0"));
       }); 
     
     }
@@ -115,36 +109,35 @@ function pinSymbol(color) {
       scale: 1,
  };
 }
-
-
+//updateflags() from button update flag postions
     function UpdateFlags(){
-     
-      var r1 = marker[i].getPosition().lat();
-      var r2 = marker[i].getPosition().lng();
-      i++;
-      console.log(marker.length,i,  r1, r2);
+      // gets lat and lng
+      var r1 = marker[count].getPosition().lat();
+      var r2 = marker[count].getPosition().lng();
+      count++;
+      console.log(marker.length,count,  r1, r2);
       lippuarray.push(new Lippu(r1 + ", " + r2, false));
       writeLippuData(lippuarray);
     }
 //remove a flag
+var rm = 1;
 function removeFlag(){
   var index = parseInt(lippuarray.length-1);
   console.log("len before: " + lippuarray.length);
   lippuarray.splice(index, 1);
   console.log("len after: " + lippuarray.length);
-  
   writeLippuData(lippuarray);
 }
 
+//clears the lippuRef and all the markers from the map
 function clearFlags(){
   lippuRef.remove();
+  flagsArrayCont
   for (var i = 0; i < marker.length; i++) {
     marker[i].setMap(null);
-    
 }
-i= 0;
+count = 0;
 marker = [];
-
 };
 
 
@@ -182,22 +175,17 @@ function updateFlagData(){
   firebase.database().ref('liput').update(updates);
 }
 
-//activates the next objective
+//activates the next objective. also changes the color of marker
 function activateNextFlag(){
   for(var i = 0; i < lippuarray.length; i++){
-    if(lippuarray[i].active == false){
-      console.log("found it at index: " + i);
-
-        marker[i].setIcon(pinSymbol("#0F0"));
-
-
-        if(marker[i+1] != undefined){
-          marker[i + 1].setIcon(pinSymbol("#FF0"));
-        }
-        
-      
-      lippuarray[i].active = true;
-       break;
+   if(lippuarray[i].active == false){
+    lippuarray[i].active = true;
+    marker[i].setIcon(pinSymbol("#FF0"));
+    if(marker[i - 1] != undefined){
+      marker[i - 1].setIcon(pinSymbol("#0F0")); 
+    }
+    
+     break;
     }
   }
   updateFlagData();
@@ -214,7 +202,13 @@ function deactivateLastFlag(){
         lippuarray[i-1].active = false;
 
       }
-      marker[i].setIcon(pinSymbol("#FFF"));
+      if(marker[i - 1] != undefined){
+        marker[i].setIcon(pinSymbol("#FFF"));
+        marker[i - 1].setIcon(pinSymbol("#FF0"));
+      }else if(marker[i - 1] == undefined){
+        marker[i].setIcon(pinSymbol("#FF0"));
+      }
+     
       break;
     }
     //very last index if all were true
@@ -224,108 +218,3 @@ function deactivateLastFlag(){
   }
   updateFlagData();
 }
-
-
-
- /**
-  * 
-  * 
-  * 
-  * This is for overlay if needed
-  */
-/*
-    function SuurpeliZone(bounds, image, map) {
-
-      // Initialize all properties.
-      this.bounds_ = bounds;
-      this.image_ = image;
-      this.map_ = map;
-      // Define a property to hold the image's div. We'll
-      // actually create this div upon receipt of the onAdd()
-      // method so we'll leave it null for now.
-      this.div_ = null;
-      // Explicitly call setMap on this overlay.
-      this.setMap(map);
-    }*/
-/*
-SuurpeliZone.prototype.onAdd = function() {
-  var div = document.createElement('div');
-  div.style.borderStyle = 'none';
-  div.style.borderWidth = '0px';
-  div.style.position = 'absolute';
-
-  // Create the img element and attach it to the div.
-  var img = document.createElement('img');
-  img.src = this.image_;
-  img.style.width = '100%';
-  img.style.height = '100%';
-  img.style.position = 'absolute';
-  div.appendChild(img);
-
-  this.div_ = div;
-
-  // Add the element to the "overlayLayer" pane.
-  var panes = this.getPanes();
-  panes.overlayLayer.appendChild(div);
-};
-
-SuurpeliZone.prototype.draw = function() {
-
-  // We use the south-west and north-east
-  // coordinates of the overlay to peg it to the correct position and size.
-  // To do this, we need to retrieve the projection from the overlay.
-  var overlayProjection = this.getProjection();
-
-  // Retrieve the south-west and north-east coordinates of this overlay
-  // in LatLngs and convert them to pixel coordinates.
-  // We'll use these coordinates to resize the div.
-  var sw = overlayProjection.fromLatLngToDivPixel(this.bounds_.getSouthWest());
-  var ne = overlayProjection.fromLatLngToDivPixel(this.bounds_.getNorthEast());
-
-  // Resize the image's div to fit the indicated dimensions.
-  var div = this.div_;
-  div.style.left = sw.x + 'px';
-  div.style.top = ne.y + 'px';
-  div.style.width = (ne.x - sw.x) + 'px';
-  div.style.height = (sw.y - ne.y) + 'px';
-};
-    
-SuurpeliZone.prototype.onRemove = function() {
-  this.div_.parentNode.removeChild(this.div_);
-};
-
-// Set the visibility to 'hidden' or 'visible'.
-SuurpeliZone.prototype.hide = function() {
-  if (this.div_) {
-    // The visibility property must be a string enclosed in quotes.
-    this.div_.style.visibility = 'hidden';
-  }
-};
-
-SuurpeliZone.prototype.show = function() {
-  if (this.div_) {
-    this.div_.style.visibility = 'visible';
-  }
-};
-
-SuurpeliZone.prototype.toggle = function() {
-  if (this.div_) {
-    if (this.div_.style.visibility === 'hidden') {
-      this.show();
-    } else {
-      this.hide();
-    }
-  }
-};
-
-SuurpeliZone.prototype.toggleDOM = function() {
-  if (this.getMap()) {
-    // Note: setMap(null) calls OverlayView.onRemove()
-    this.setMap(null);
-  } else {
-    this.setMap(this.map_);
-  }
-};*/
-
-/*google.maps.event.addDomListener(window, 'load', initMap);*/
-    
