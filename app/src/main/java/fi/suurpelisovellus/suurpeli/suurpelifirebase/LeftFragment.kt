@@ -10,6 +10,7 @@ import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,6 +45,9 @@ class LeftFragment : Fragment() {
     //create a field for the notification
     private var jBuilder: NotificationCompat.Builder? = null
 
+    //track if the fragment is paused or not, used in notification handling, check valueListener onDataChange method
+    private var isPaused: Boolean = false
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
@@ -67,26 +71,28 @@ class LeftFragment : Fragment() {
             timeLeft = time - System.currentTimeMillis()
             timeLeft /= 1000
             //timerValueText.text = convertTime(timeLeft)
+
+            //removeCallbacks is called in updatePaused runnable if timer reaches 0
+            //this way, if the app is paused and we get a new timer it'll start updating the notification
+            //without needing to open the app
+            //isPaused changes in onResume and onPause methods
+            if(isPaused){
+                pHandler.removeCallbacks(updatePaused)
+                updatePaused.run()
+            }
         }
     }
-
-    private val lippuData: ValueEventListener = object : ValueEventListener {
-        override fun onCancelled(p0: DatabaseError) {
-        }
-
-        override fun onDataChange(data: DataSnapshot) {
-
-        }
-    }
-
 
 
     override fun onResume() {
         super.onResume()
+        //used in notification stuff, check valueListener onDataChange
+        isPaused = false
 
-        lippuRef.addValueEventListener(lippuData)
         //cancel notification when app is active
         jManager?.cancel(TimerNotificationID)
+
+
         //remove pause handler callbacks
         pHandler.removeCallbacks(updatePaused)
 
@@ -99,7 +105,6 @@ class LeftFragment : Fragment() {
 
         //start updating timer
         updateTimer.run()
-
     }
 
 
@@ -164,6 +169,8 @@ class LeftFragment : Fragment() {
 
     override fun onPause() {
         super.onPause()
+        //used in notification stuff, check valueListener onDataChange
+        isPaused = true
         //stop refreshing timer
         mHandler.removeCallbacks(updateTimer)
 
@@ -186,12 +193,15 @@ class LeftFragment : Fragment() {
         //create notification manager
         jManager = activity?.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
+
+
         //create a notification
         jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "default")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
                 .setContentTitle("Game time remaining:")
                 .setContentText(convertTime(timeLeft))
                 //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
+                //old priority for older android versions, 0 should be default level
                 .setPriority(0)
                 //1 should be PUBLIC == show all the things in lock screen
                 .setVisibility(1)
@@ -230,13 +240,6 @@ class LeftFragment : Fragment() {
         val secs = seconds % 60
         return String.format("%d:%02d", minutes, secs)
     }
-
-
-
-
-
-
-
 }
 
 
