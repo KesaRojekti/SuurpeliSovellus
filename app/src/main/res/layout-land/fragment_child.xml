@@ -5,9 +5,9 @@
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:animateLayoutChanges="true"
     android:background="@color/LightSlateGray"
-    tools:context=".ChildFragment">
+    tools:context=".ChildFragment"
+    android:animateLayoutChanges="true">
 
     <!-- TODO: Update blank fragment layout -->
 
@@ -28,11 +28,11 @@
             android:layout_marginBottom="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
-            android:alpha="0.1"
             android:drawableEnd="@android:drawable/presence_invisible"
             android:gravity="center"
             android:text=""
             android:textAlignment="center"
+            android:alpha="0.1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/news4"
             app:layout_constraintTop_toTopOf="parent" />
@@ -44,11 +44,11 @@
             android:layout_marginBottom="0dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="0dp"
-            android:alpha="0.1"
             android:drawableEnd="@android:drawable/presence_invisible"
             android:gravity="center"
             android:text=""
             android:textAlignment="center"
+            android:alpha="0.1"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/news3"
             app:layout_constraintTop_toTopOf="parent" />
@@ -104,11 +104,11 @@
 
     <Button
         android:id="@+id/buttonFwd"
-        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:shadowColor="@android:color/transparent"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,11 +119,11 @@
 
     <Button
         android:id="@+id/buttonBack"
-        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:layout_width="100dp"
         android:layout_height="match_parent"
         android:background="@android:color/transparent"
         android:shadowColor="@android:color/transparent"
+        style="@style/Base.Widget.AppCompat.Button.Borderless"
         android:text=""
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
