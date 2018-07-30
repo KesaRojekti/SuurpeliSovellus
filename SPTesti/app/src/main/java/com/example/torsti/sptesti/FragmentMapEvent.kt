@@ -241,6 +241,9 @@ class FragmentMapEvent: Fragment(),
                 mMap.setLatLngBoundsForCameraTarget(null)
                 mMap.setMinZoomPreference(2f)
                 btnEventOverlayInfo.visibility = GONE
+                if(eventGroundOverlayInfo.isVisible){
+                    eventGroundOverlayInfo.isVisible = false
+                }
             } else {
                 eventGroundOverlay.isVisible = true
                 eventOverlayOnOff = true
@@ -250,6 +253,9 @@ class FragmentMapEvent: Fragment(),
                 mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
                 mMap.setMinZoomPreference(15f)
                 btnEventOverlayInfo.visibility = VISIBLE
+                if (eventOverlayInfoOnOff){
+                    eventGroundOverlayInfo.isVisible = true
+                }
             }
         }else if (btnEventGroundOverlayOnOff == btnEventOverlayInfo) {
             if (eventOverlayInfoOnOff) {
