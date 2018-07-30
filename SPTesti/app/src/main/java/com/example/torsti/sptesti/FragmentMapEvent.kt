@@ -1,36 +1,25 @@
 package com.example.torsti.sptesti
 
 import android.Manifest
-import android.annotation.SuppressLint
-import android.content.ContentProviderClient
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
-import android.location.LocationListener
-import android.location.LocationManager
-import android.location.LocationProvider
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
-import android.support.v4.content.ContextCompat.getSystemService
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
-import com.google.firebase.FirebaseApp
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.layout_map_event.*
-import org.jetbrains.anko.doAsync
-import org.jetbrains.anko.uiThread
+
 
 
 
@@ -40,17 +29,28 @@ class FragmentMapEvent: Fragment(),
 
 
     private lateinit var eventGroundOverlay: GroundOverlay
+    private lateinit var eventGroundOverlayInfo: GroundOverlay
     private lateinit var mView: View
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
-    private lateinit var btnRefresh: Button
+    private lateinit var btnEventOverlay: Button
+    private lateinit var btnEventOverlayInfo: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var marker: Marker
     private var markerOptions: MarkerOptions = MarkerOptions()
-    private var eventOverlayOnOff: Boolean = true
+    private var eventOverlayOnOff = true
+    private var eventOverlayInfoOnOff = false
+    private var eventSouthWestCoordinate = LatLng(61.813422, 25.16621)
+    private var eventNorthEastCoordinate = LatLng(61.817262, 25.174791)
     private var eventLatLngBounds: LatLngBounds = LatLngBounds(
-            LatLng(60.166667, 23.868056),
-            LatLng(61.192059, 27.945831))
+            eventSouthWestCoordinate,
+            eventNorthEastCoordinate)
+    private var initialCameraPosition = LatLng(
+            ((eventSouthWestCoordinate.latitude + eventNorthEastCoordinate.latitude) / 2f),
+            ((eventSouthWestCoordinate.longitude + eventNorthEastCoordinate.longitude) / 2f))
+    private var eventLatLngInfoBounds = LatLngBounds(
+            LatLng(eventSouthWestCoordinate.latitude, eventSouthWestCoordinate.longitude - ((1280/901)*(eventNorthEastCoordinate.latitude - eventSouthWestCoordinate.latitude))),
+            LatLng(eventNorthEastCoordinate.latitude, eventSouthWestCoordinate.longitude))
     private lateinit var myLocation: Marker
     private lateinit var locationCallback: LocationCallback
     private lateinit var listLocationList: MutableList<Location>
@@ -128,11 +128,15 @@ class FragmentMapEvent: Fragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.layout_map_event, container, false)
-        btnRefresh = mView.findViewById(R.id.button)
-        btnRefresh.setOnClickListener(this)
+        btnEventOverlay = mView.findViewById(R.id.buttonOverlay)
+        btnEventOverlay.setOnClickListener(this)
+        btnEventOverlayInfo = mView.findViewById(R.id.buttonOverlayInfo)
+        btnEventOverlayInfo.setOnClickListener(this)
         mapFragment = childFragmentManager
                 .findFragmentById(R.id.map_event) as SupportMapFragment
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
+
 
         if (mapFragment == null) {
             var fm: FragmentManager? = fragmentManager
@@ -160,7 +164,6 @@ class FragmentMapEvent: Fragment(),
                                 .position(latitudeLongitude)
                                 .title("My Location"))
 
-                        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latitudeLongitude, 14f))
                         markerOptions.position(latitudeLongitude)
                     }
                 }
@@ -173,9 +176,14 @@ class FragmentMapEvent: Fragment(),
         mMap = googleMap
 
         eventGroundOverlay = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("SP18.jpg"))
+            image(BitmapDescriptorFactory.fromAsset("SP18_paino_svg.png"))
             positionFromBounds(eventLatLngBounds)
-            //Coordinates of Jämsä: LatLng(61.166667, 23.868056)
+        })
+
+        eventGroundOverlayInfo = mMap.addGroundOverlay(GroundOverlayOptions().apply {
+            image(BitmapDescriptorFactory.fromAsset("SP18Info.jpg"))
+            positionFromBounds(eventLatLngInfoBounds)
+            visible(false)
         })
 
         val locationRequest = LocationRequest().apply {
@@ -193,10 +201,11 @@ class FragmentMapEvent: Fragment(),
         }
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
-        // Set the map layout to display the eventGroundOverlay
+        // Set the initial camera settings to display eventGroundOverlay
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
         mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
-        mMap.setMinZoomPreference(7f)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((initialCameraPosition), 16f))
+        mMap.setMinZoomPreference(15f)
     }
 
     override fun onResume() {
@@ -223,22 +232,35 @@ class FragmentMapEvent: Fragment(),
      */
 
     override fun onClick(btnEventGroundOverlayOnOff: View) {
-        //Not functional yet
-        if(eventOverlayOnOff) {
-            eventGroundOverlay.isVisible = false
-            eventOverlayOnOff = false
-            mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL)
-            button.text = "Event Overlay: OFF"
-            mMap.setLatLngBoundsForCameraTarget(null)
-            mMap.setMinZoomPreference(2f)
-        } else {
-            eventGroundOverlay.isVisible = true
-            eventOverlayOnOff = true
-            mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
-            button.text = "Event Overlay: ON"
-            mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
-            mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
-            mMap.setMinZoomPreference(7f)
+        if(btnEventGroundOverlayOnOff == btnEventOverlay) {
+            if (eventOverlayOnOff) {
+                eventGroundOverlay.isVisible = false
+                eventOverlayOnOff = false
+                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL)
+                buttonOverlay.text = "Event Map: OFF"
+                mMap.setLatLngBoundsForCameraTarget(null)
+                mMap.setMinZoomPreference(2f)
+                btnEventOverlayInfo.visibility = GONE
+            } else {
+                eventGroundOverlay.isVisible = true
+                eventOverlayOnOff = true
+                mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
+                buttonOverlay.text = "Event Map: ON"
+                mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
+                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
+                mMap.setMinZoomPreference(15f)
+                btnEventOverlayInfo.visibility = VISIBLE
+            }
+        }else if (btnEventGroundOverlayOnOff == btnEventOverlayInfo) {
+            if (eventOverlayInfoOnOff) {
+                btnEventOverlayInfo.text = "Info: OFF"
+                eventGroundOverlayInfo.isVisible = false
+                eventOverlayInfoOnOff = false
+            } else {
+                btnEventOverlayInfo.text = "Info: ON"
+                eventGroundOverlayInfo.isVisible = true
+                eventOverlayInfoOnOff = true
+            }
         }
     }
 

@@ -28,11 +28,19 @@
         android:layout_height="match_parent" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/buttonOverlay"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Event Overlay: ON"
+        android:text="Event Map: ON"
         app:layout_constraintEnd_toEndOf="parent"
         tools:layout_editor_absoluteY="0dp" />
+
+    <Button
+        android:id="@+id/buttonOverlayInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Info: OFF"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="490dp" />
 
 </android.support.constraint.ConstraintLayout>
