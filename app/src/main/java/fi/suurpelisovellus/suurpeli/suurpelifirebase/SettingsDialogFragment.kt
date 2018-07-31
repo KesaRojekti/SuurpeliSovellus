@@ -22,7 +22,7 @@ class SettingsDialogFragment : DialogFragment() {
         readPreferences()
         //build the dialog
         val diaBuilder: AlertDialog.Builder = AlertDialog.Builder(activity)
-                .setTitle("Settings")
+                .setTitle(getString(R.string.settings_text))
                 //set up a multiple choice list (can contain just 1 item)
                 .setMultiChoiceItems(R.array.settings_dialog_options, checkedItems) { _, which, isChecked ->
                     if(isChecked){

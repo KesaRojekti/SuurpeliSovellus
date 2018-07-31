@@ -124,7 +124,7 @@ class LeftFragment : Fragment() {
 
             //if timer reaches 0 stop updating and update text
             if(timeLeft < 0){
-                timerValueText.text = "no game"
+                timerValueText.text = getString(R.string.no_game_text)
                 mHandler.removeCallbacks(this)
             }
             else
@@ -198,7 +198,7 @@ class LeftFragment : Fragment() {
         //create a notification
         jBuilder = NotificationCompat.Builder(activity?.baseContext!!, "default")
                 .setSmallIcon(android.R.drawable.ic_dialog_info)
-                .setContentTitle("Game time remaining:")
+                .setContentTitle(getString(R.string.gametime_notification_title))
                 .setContentText(convertTime(timeLeft))
                 //.setStyle(object : NotificationCompat.BigTextStyle(){}.bigText("huutist\njoka\ntuutist\nkek"))
                 //old priority for older android versions, 0 should be default level

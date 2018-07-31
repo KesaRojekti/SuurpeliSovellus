@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ExpandableListView
 import kotlinx.android.synthetic.main.fragment_right.*
+import java.util.*
 
 
 /**
@@ -16,7 +17,9 @@ import kotlinx.android.synthetic.main.fragment_right.*
  */
 class RightFragment : Fragment() {
 
-    var listDataHeader: List<String> = listOf("PST-pelaaja", "Lääkintämies", "Ryhmänjohtaja", "Sektorinjohtaja", "Komentaja")
+    //var listDataHeader: List<String> = listOf("PST-pelaaja", "Lääkintämies", "Ryhmänjohtaja", "Sektorinjohtaja", "Komentaja")
+    //init at onResume, needs context!
+    private lateinit var listDataHeader: List<String>
     var listHash: HashMap<String, List<String>>? = null
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -27,6 +30,7 @@ class RightFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        listDataHeader = listOf(getString(R.string.pst_title), getString(R.string.medic_title), getString(R.string.ryhm_title), getString(R.string.sektori_title), getString(R.string.komentaja_title))
         val listView = lvExp as ExpandableListView
         //populate lists
         initData()
