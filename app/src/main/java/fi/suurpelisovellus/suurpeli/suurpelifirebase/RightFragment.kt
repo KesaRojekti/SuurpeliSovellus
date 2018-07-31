@@ -78,7 +78,6 @@ class RightFragment : Fragment() {
         val threeLevelListAdapterAdapter = ThreeLevelListAdapter(activity?.baseContext, parent, secondLevel, data)
 
         expListView.setAdapter(threeLevelListAdapterAdapter)
-
     }
 
     /**

@@ -1,6 +1,7 @@
 package fi.suurpelisovellus.suurpeli.suurpelifirebase
 
 
+import android.content.Context
 import android.content.Intent
 import android.support.design.widget.TabLayout
 import android.support.v7.app.AppCompatActivity
@@ -34,6 +35,14 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        //create a sharedPreferences file if it doesn't exist already, and default notification setting to TRUE
+        val sharedPref = getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
+        val sharedKey = getString(R.string.settings_notifications_key)
+        if(!sharedPref.contains(sharedKey)){
+            val editor = sharedPref?.edit()
+            editor?.putBoolean(sharedKey, true)
+            editor?.apply()
+        }
 
         //get current user
         val user:FirebaseUser? = auth.currentUser

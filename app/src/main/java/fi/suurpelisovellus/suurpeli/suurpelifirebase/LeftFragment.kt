@@ -32,6 +32,7 @@ class LeftFragment : Fragment() {
     private val database = FirebaseDatabase.getInstance()
     private val timerValue = database.getReference("targetTime")
     private val lippuRef: DatabaseReference = database.getReference("lippu3")
+    private val gamePauseRef = database.getReference("gamePaused")
     private var timeLeft: Long = 0
     //while active handler
     private val mHandler: Handler = Handler()
@@ -47,6 +48,8 @@ class LeftFragment : Fragment() {
 
     //track if the fragment is paused or not, used in notification handling, check valueListener onDataChange method
     private var isPaused: Boolean = false
+
+    private var gamePaused: Boolean = false
 
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -70,7 +73,7 @@ class LeftFragment : Fragment() {
             val timer:Any? = data.value
             val time = (timer as Long).toLong()
             timeLeft = time - System.currentTimeMillis()
-            timeLeft /= 1000
+            timeLeft /= 1000 //time is now seconds
             //timerValueText.text = convertTime(timeLeft)
 
             //removeCallbacks is called in updatePaused runnable if timer reaches 0
@@ -81,6 +84,19 @@ class LeftFragment : Fragment() {
                 pHandler.removeCallbacks(updatePaused)
                 updatePaused.run()
             }
+        }
+    }
+
+    private val gamePauseListener = object : ValueEventListener {
+        override fun onCancelled(p0: DatabaseError) {
+
+        }
+
+        override fun onDataChange(data: DataSnapshot) {
+            val d: Any? = data.value
+            val pause: Boolean = d as Boolean
+            gamePaused = pause
+            //Log.d("gamePause", "" + pause)
         }
     }
 
@@ -99,6 +115,9 @@ class LeftFragment : Fragment() {
 
         //add listener for database value changes (also get the data for the first time)
         timerValue.addValueEventListener(valueListener)
+
+        //add listener to see if the game is paused or not
+        gamePauseRef.addValueEventListener(gamePauseListener)
 
         //add news fragment
         childFragmentManager.beginTransaction().add(R.id.childView, ChildFragment()).commit()
@@ -127,6 +146,10 @@ class LeftFragment : Fragment() {
             if(timeLeft < 0){
                 timerValueText.text = getString(R.string.no_game_text)
                 mHandler.removeCallbacks(this)
+            }
+            //if the game is paused let users know, and don't update the timer
+            if(gamePaused){
+                timerValueText.text = "game is paused"
             }
             else
             {
@@ -159,6 +182,11 @@ class LeftFragment : Fragment() {
                 pHandler.removeCallbacks(this)
                 jManager?.cancel(TimerNotificationID)
             }
+            if(gamePaused){
+                jBuilder?.setContentText("Game is paused!")
+                //push notification
+                jManager?.notify(TimerNotificationID, jBuilder?.build())
+            }
             else
             {
                 //push notification
@@ -187,8 +215,10 @@ class LeftFragment : Fragment() {
         stackBuilder.addNextIntentWithParentStack(returnIntent)
         val returnPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
+        Log.d("shit", "" + showNotifications)
         //start pushing notification if necessary
         if(timeLeft > 0 && showNotifications!!){
+
             updatePaused.run()
         }
         //create notification manager
