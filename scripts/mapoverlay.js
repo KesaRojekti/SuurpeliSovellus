@@ -11,14 +11,16 @@ function initMap() {
   });
 
   
-   //vanhat koordinaatit
-   
   var bounds = new google.maps.LatLngBounds(
-    new google.maps.LatLng(61.813649878776054, 25.16612636187142),
-    //jos tarvii vaihda 2 ensimmäinen 3.
-    new google.maps.LatLng(61.81735408832565, 25.17486736193234));
-   
-    srcImage = `SP18_paino_svg.png`;
+  
+    //eka alhaalle ja toinen oikealle
+    new google.maps.LatLng(61.813622178968614, 25.163429856591765),
+    //ylös ja oikealle
+    new google.maps.LatLng(61.81729408832565, 25.17466736193234));
+
+// The photograph is courtesy of the U.S. Geological Survey.
+var srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
+
 
 
   map.addListener('click', function(e) {
@@ -34,6 +36,25 @@ function initMap() {
 
   overlay = new Suurpeli(bounds, srcImage, map);
 }
+
+function setMarkers(locations) {
+
+  for (var i = 0; i < locations.length; i++) {
+      var beach = locations[i];
+      var myLatLng = new google.maps.LatLng(beach[1], beach[2]);
+      var marker = new google.maps.Marker({
+          position: myLatLng,
+          map: map,
+          animation: google.maps.Animation.DROP,
+          title: beach[0],
+          zIndex: beach[3]
+      });
+      
+      // Push marker to markers array
+      markers.push(marker);
+  }
+}
+
 /** @constructor */
 function Suurpeli(bounds, image, map) {
 
@@ -56,7 +77,6 @@ function Suurpeli(bounds, image, map) {
  * added to the map.
  */
 Suurpeli.prototype.onAdd = function() {
-
   var div = document.createElement('div');
   div.style.borderStyle = 'none';
   div.style.borderWidth = '0px';
@@ -119,3 +139,20 @@ Suurpeli.prototype.toggle = function() {
 
 
 google.maps.event.addDomListener(window, 'load', initMap);
+
+
+/**
+ * 
+ * 
+ *   var bounds = new google.maps.LatLngBounds(
+  
+  		//eka alhaalle ja toinen oikealle
+      new google.maps.LatLng(61.813622178968614, 25.163429856591765),
+      //ylös ja oikealle
+      new google.maps.LatLng(61.81725408832565, 25.17466736193234));
+
+  // The photograph is courtesy of the U.S. Geological Survey.
+  var srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
+
+
+ */

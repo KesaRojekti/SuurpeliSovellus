@@ -173,7 +173,6 @@ function activateNextFlag(){
     if(marker[i - 1] != undefined){
       marker[i - 1].setIcon(pinSymbol("#0F0")); 
     }
-    
      break;
     }
   }
@@ -192,8 +191,8 @@ function deactivateLastFlag(){
 
       }
       if(marker[i - 1] != undefined){
-        marker[i].setIcon(pinSymbol("#FFF"));
-        marker[i - 1].setIcon(pinSymbol("#FF0"));
+        marker[i - 1].setIcon(pinSymbol("#FFF"));
+        marker[i - 2].setIcon(pinSymbol("#FF0"));
       }else if(marker[i - 1] == undefined){
         marker[i].setIcon(pinSymbol("#FF0"));
       }
