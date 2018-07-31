@@ -172,5 +172,7 @@ Erän pituus on 100 minuuttia, jonka aikana hyökkäävät joukkueet pyrkivät v
 
     <string-array name="sattuiko">
         <item>Pelin aikana ensiavusta huolehtivat tuoma­rei­na toimivat henkilöt. PMR-kanava 4 toi­mii hätäkanavana. Järjestäjällä on vastuuvakuutus, mutta ei pelaaja­koh­taista tapaturmavakuutusta, joten jokai­nen pelaa omalla vastuulla. Omat vapaa-ajan vakuutukset kannattaa olla kun­nossa, kuten aina painttia pelatessa. Tukikohdissa ja pelialueen välittömässä läheisyydessä pitää olla maski päässä!</item>
+        <item>Musta joukkue pitää tukikohtia pelialueen ulkopuolella ja toimii niistä käsin muita joukkueita vastaan.</item>
+        <item>Osuman saatuaan mustan joukkueen pelaajaa siirtyy keltaisen nauhan ulkopuolelle ja pysyy siellä vähintään 10min. Mustalla joukkueella ei ole lämäreitä, eli yksi osuma riittää eliminointiin. Pelialueelle mustan joukkueen pelaajat voivat palata mistä kohdasta tahansa, kuitenkin niin että suoraan nauhalta ei voi iskeä muiden joukkueiden kimppuun. Mustan joukkueen pelaaja ei voi paeta keltaisen nauhan yli.</item>
     </string-array>
 </resources>

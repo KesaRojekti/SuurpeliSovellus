@@ -132,6 +132,8 @@ Erän pituus on 100 minuuttia, jonka aikana hyökkäävät joukkueet pyrkivät v
 
     <string-array name="mustajoukkue">
         <item>Pelialueella liikkuu musta joukkue, jonka tarkoituksena on aiheuttaa hämminkiä pelaamalla kaikkia muita joukkueita vastaan. Musta joukkue ei pelaa suurpelin voitosta, eikä se kerää pisteitä.</item>
+        <item>Musta joukkue pitää tukikohtia pelialueen ulkopuolella ja toimii niistä käsin muita joukkueita vastaan.</item>
+        <item>Osuman saatuaan mustan joukkueen pelaajaa siirtyy keltaisen nauhan ulkopuolelle ja pysyy siellä vähintään 10min. Mustalla joukkueella ei ole lämäreitä, eli yksi osuma riittää eliminointiin. Pelialueelle mustan joukkueen pelaajat voivat palata mistä kohdasta tahansa, kuitenkin niin että suoraan nauhalta ei voi iskeä muiden joukkueiden kimppuun. Mustan joukkueen pelaaja ei voi paeta keltaisen nauhan yli.</item>
     </string-array>
 
     <string-array name="ajoohje">
