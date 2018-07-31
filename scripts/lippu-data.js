@@ -21,14 +21,17 @@ var lippuRef = firebase.database().ref('liput');
 
 //listen for changes
 lippuRef.on('child_added', function(){
+  
   getLippuData();
 });
 
 lippuRef.on('child_changed', function(){
+ 
   getLippuData();
 });
 
 lippuRef.on('child_removed', function(){
+ 
   getLippuData();
 });
 
@@ -39,6 +42,7 @@ var lippuarray = [];
 function getLippuData(){
   lippuRef.once('value', function(snapshot){
     document.getElementById("lippuData").innerHTML = "";
+    
     //placeholder array
     var snapShotArr = [];
     snapshot.forEach(function(childSnapshot){
@@ -57,9 +61,14 @@ function getLippuData(){
       "</tr>";
     });
     console.log("snapShotArr len: " + snapShotArr.length);
+
     //assign placeholder array to the instance variable array
     lippuarray = snapShotArr;
     console.log("lippuarr len: " + lippuarray.length);
+     //checks markers
+     if(lippuarray.length > 0){
+      writeLippuData();
+    }
   });
 }
 
@@ -72,36 +81,13 @@ var flagsArrayCont;
 }
  //Google maps
     var map, count =0;
-    var start = {lat: 61.81555994553038, lng: 25.17069664313044};
+    var start = {lat: 61.81550458885635, lng: 25.170653930688445};
     var overlay;
     
-    /*SuurpeliZone.prototype = new google.maps.OverlayView();*/
-
-    function initMap() { 
-      console.log(marker.length);
-console.log(count);
-    map = new google.maps.Map(
-      document.getElementById('map'), {zoom: 17,
-       center: start,
-      mapTypeId: `satellite`});
-   
-      
-      map.addListener('click', function(e) {
-
-        var location = e.latLng;
-        
-        marker.push(new google.maps.Marker({position: location,
-           map: map,
-            draggable: true,
-          icon: pinSymbol("#FFF")}));
-      }); 
-    
-    }
-   
 //Symbol for marker icon
 function pinSymbol(color) {
   return {
-      path: 'M 4,8 -1,-2 V -50 H 1 V -2 z M 1,-45 H 30 V -20 H 1 z',
+      path: 'M 0,0 -1,-2 V -45 H 1 V -2 z M 1,-45 H 30 V -20 H 1 z',
       fillColor: color,
       fillOpacity: 1,
       strokeColor: '#000',
@@ -177,9 +163,12 @@ function updateFlagData(){
 
 //activates the next objective. also changes the color of marker
 function activateNextFlag(){
+  var l = 0;
   for(var i = 0; i < lippuarray.length; i++){
+    
    if(lippuarray[i].active == false){
     lippuarray[i].active = true;
+
     marker[i].setIcon(pinSymbol("#FF0"));
     if(marker[i - 1] != undefined){
       marker[i - 1].setIcon(pinSymbol("#0F0")); 
@@ -208,7 +197,6 @@ function deactivateLastFlag(){
       }else if(marker[i - 1] == undefined){
         marker[i].setIcon(pinSymbol("#FF0"));
       }
-     
       break;
     }
     //very last index if all were true
