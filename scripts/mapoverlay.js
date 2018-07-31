@@ -37,6 +37,7 @@ var srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
   overlay = new Suurpeli(bounds, srcImage, map);
 }
 
+
 function setMarkers(locations) {
 
   for (var i = 0; i < locations.length; i++) {

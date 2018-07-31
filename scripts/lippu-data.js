@@ -38,6 +38,7 @@ lippuRef.on('child_removed', function(){
 //create an empty array for all lippu objects
 var lippuarray = [];
 
+
 //get all children and populate table
 function getLippuData(){
   lippuRef.once('value', function(snapshot){
@@ -59,22 +60,28 @@ function getLippuData(){
       "<td>" + "isActive?:" + "</td>" + 
       "<td>" + childData.active + "</td>" + 
       "</tr>";
+      
+      
+      
     });
     console.log("snapShotArr len: " + snapShotArr.length);
 
     //assign placeholder array to the instance variable array
     lippuarray = snapShotArr;
     console.log("lippuarr len: " + lippuarray.length);
+    /*don't know what this is used for, but you have to pass an array to writeLippuData()!!
      //checks markers
      if(lippuarray.length > 0){
       writeLippuData();
     }
+    */
   });
 }
 
+
 //add a flag
 var flagsArrayCont;
- var marker = [];
+var marker = [];
  function pushTest(){
    marker = new google.maps.Marker({position: start, map: map, draggable: true});
   writeLippuData(lippuarray);
@@ -105,6 +112,10 @@ function pinSymbol(color) {
       lippuarray.push(new Lippu(r1 + ", " + r2, false));
       writeLippuData(lippuarray);
     }
+
+
+
+
 //remove a flag
 var rm = 1;
 function removeFlag(){
@@ -131,6 +142,7 @@ marker = [];
 function writeLippuData(lippuarr){
   var i = 1;
   var updates = {};
+  console.log("larrLen:" + lippuarr.length)
   
   lippuarr.forEach(function(l){
     var data = {
@@ -179,29 +191,49 @@ function activateNextFlag(){
   updateFlagData();
 }
 
-//deactivate last active objective in the list
-function deactivateLastFlag(){
-  console.log("len: " + lippuarray.length);
-  for(var i = 0; i < lippuarray.length; i++){
-    if(lippuarray[i].active == false){
-      console.log("found it at index: " + i);
-      
-      if(lippuarray[i - 1] != undefined){
-        lippuarray[i-1].active = false;
 
+
+//deactivate last (true) objective in the list
+function deactivateLastFlag(){
+  for(var i = 0; i < lippuarray.length; i++){
+    //find first non active flag
+    if(lippuarray[i].active == false){
+      if(i > 0){
+        lippuarray[i-1].active = false;
       }
-      if(marker[i - 1] != undefined){
-        marker[i - 1].setIcon(pinSymbol("#FFF"));
-        marker[i - 2].setIcon(pinSymbol("#FF0"));
-      }else if(marker[i - 1] == undefined){
-        marker[i].setIcon(pinSymbol("#FF0"));
-      }
-      break;
     }
-    //very last index if all were true
+    //very last flag (or only flag)
     if(i == lippuarray.length-1){
       lippuarray[i].active = false;
     }
   }
   updateFlagData();
+  colorFlags();
+}
+
+
+//FFF = valkonen marker[i].setIcon(pinSymbol("#FFF"));
+//FF0 = keltainen marker[i].setIcon(pinSymbol("#FF0"));
+//viimeinen true = keltainen (aktiivinen lippu)
+//color flags according to lippu active state
+function colorFlags(){
+  for(var i = 0; i < marker.length; i++){
+    if(lippuarray[i].active == true){
+      //find first non active flag
+      if(lippuarray[i+1].active == false){
+        //if i+1 is false a.k.a (this flag is the last true) color it yellow
+        marker[i].setIcon(pinSymbol("#FF0"));
+      }
+      else
+      {
+        //if this isn't the last true flag, color it green
+        marker[i].setIcon(pinSymbol("#0F0"));
+      }
+    }
+    else
+    {
+      //if the flag is inactive, color it white
+      marker[i].setIcon(pinSymbol("#FFF"));
+    }
+  }
 }
