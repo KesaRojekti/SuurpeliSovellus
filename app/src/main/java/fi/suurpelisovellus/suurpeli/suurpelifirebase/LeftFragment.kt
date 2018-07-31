@@ -48,6 +48,7 @@ class LeftFragment : Fragment() {
     //track if the fragment is paused or not, used in notification handling, check valueListener onDataChange method
     private var isPaused: Boolean = false
 
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
 
