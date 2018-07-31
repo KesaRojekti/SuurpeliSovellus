@@ -36,7 +36,7 @@
     <!-- Säännöt/ohjeet stuff -->
     <string-array name="ohjeetsaannot">
         <item>Ohjeet</item>
-        <item>Saannot</item>
+        <item>Säännöt</item>
     </string-array>
 
     <string-array name="ohjeet">
