@@ -34,4 +34,144 @@
     <string name="settings_notifications_key">notificationKey</string>
     <string name="google_maps_key" templateMergeStrategy="preserve" translatable="false">AIzaSyCh0taS3fKAw2gLYMsrFgK4ZRBjqAyd8r4</string>
 
+    <!-- Säännöt/ohjeet stuff -->
+    <string-array name="ohjeetsaannot">
+        <item>Ohjeet</item>
+        <item>Saannot</item>
+    </string-array>
+
+    <string-array name="ohjeet">
+        <item>Ajo-ohje</item>
+        <item>PMR-radiokanavat</item>
+        <item>Aikataulu</item>
+        <item>Sattuiko?</item>
+    </string-array>
+
+
+    <string-array name="saannot">
+        <item>Lippusiimat</item>
+        <item>Tunnusta väriä</item>
+        <item>Eliminointisäännöt(lääkintämies sääntö)</item>
+        <item>Ajoneuvot</item>
+        <item>Kilpien käyttö</item>
+        <item>Pelin kulku ja lippuasemat</item>
+        <item>Respat</item>
+        <item>Musta joukkue</item>
+    </string-array>
+
+    <string-array name="lippusiimat">
+        <item>Älä katko lippusiimoja.</item>
+        <item>Keltaisia lippusiimoja ei saa ylittää, alittaa, kiertää eikä niiden yli ammuta missään tapauksessa!</item>
+        <item>Sinistä lippusiimaa ei saa ylittää hyökkäävä joukkue, mutta sen yli saa ampua.</item>
+        <item>HUOM! Järjestäjä voi tehdä muutoksia lippusiimoihin pelin aikana parantaakseen pelin toimivuutta!</item>
+    </string-array>
+
+    <string-array name="tunnustavaria">
+        <item>Joukkuehuivi tulee pukea siten, että se peittää päälakesi kokonaan.</item>
+        <item>Katso ohjeet huivipaketista tai kysy tuomareilta.</item>
+    </string-array>
+
+    <string-array name="eliminointisaannot">
+        <item>\"Haavoittunut\" pelaaja:</item>
+        <item>Aktiivinen pelaaja haavoittuu, kun pelaajaan tulee palloista yli 2e kolikon kokonainen maalijälki.</item>
+        <item>Välittömästi osuman havaittuaan huutaa ”OSUMA”. Hakeutuu suojaan (5m).</item>
+        <item>Tulppaa aseen ja pitää piipun suunnatuna ylös ja niin ylhäällä, että piippu pysyy pään yläpuolella!</item>
+        <item>Pysyy poissa pelin kulun tieltä. Varsinkin kilpenä toimiminen on kiellettyä.</item>
+        <item>Pitää asettaan ylhäällä koko ajan, niin ettei kenellekään ole epäselvää onko pelaaja aktiivinen vai ei.</item>
+        <item>Saa huutaa vain lääkintämiestä. Ei puhu muuten.</item>
+        <item>Tuomari voi määrätä pelaajan haavoittuneeksi.</item>
+        <item>Voi palata peliin vain antamalla vihreän hihanauhan lääkintämiehelle, joka pyyhkii jäljet pois.</item>
+        <item> </item>
+        <item>Pelaaja eliminoituu jos:</item>
+        <item>Aktiivinen tai haavoittunut vihollinen koskettaa.</item>
+        <item>Toisesta \”haavoittumisesta\” (EI kahdesta osumasta, vaan jos on jo kerran haavoittunut ja lääkintä­miehen parantama).</item>
+        <item>Lääkintämiestä ei ala kuulua. Haavoittunut eliminoituu viidessä minuutissa haavoittu­mi­­sestaan. Haavoittunut seuraa itse aikaa, ja jos kelloa ei ole, niin aika arvioidaan.</item>
+        <item> </item>
+        <item>Lääkintämies:</item>
+        <item>Palauttaa pelaajan vihreää hihanauhaa vastaan ”haavoittuneesta” ­aktiiviseksi.</item>
+        <item>Lääkintämies EI haavoitu, vaan eliminoituu kerrasta!</item>
+        <item>Eliminoidun pelaajan täytyy palata takaisin keskialueen tukikohtaan uudelleenryhmitystä varten. Tukikohdista pääsee 10 minuutin välein ryhmittäin takaisin peliin.</item>
+        <item>HUOM! Haavoittunutta pelaajaa EI SAA ENÄÄ AMPUA. Haavoittunut pelaaja ei eliminoidu, vaikka siihen ampuisi tuhat kuulaa.</item>
+
+    </string-array>
+
+    <string-array name="ajoneuvot">
+        <item>Hyökkäävillä joukkueilla on käytössään yksi ajoneuvo, jota voi käyttää 5 kertaa erän aikana.</item>
+        <item>Ajoneuvossa on ampuma-aukot, joten siitä voi ampua kentällä olevia pelaajia.</item>
+        <item>Ajoneuvo on käytettävissä silloin, kun hyökkäävä joukkue käyttää Respaa B.</item>
+        <item>Ajoneuvoja saa ampua VAIN valkoisilla .50 cal värikuulilla, joita kutsutaan PST-kuuliksi.</item>
+        <item>PST-kuulia saa ampua VAIN PST-hihamerkillä varustettu pelaaja PST-kuulien ammuntaan tarkoitetulla aseella.</item>
+        <item>PST-pelaajan pitää kantaa kahta eri asetta: yhtä pelaajien ampumiseksi ja toista ajoneuvojen ampumiseksi.</item>
+        <item>Ajoneuvon sisällä olevia pelaajia ei voi eliminoida ampumalla. Sisällä olevat pelaajat ovat immuuneja tavalliselle kuulalle.</item>
+        <item>Ajoneuvo pysähtyy vain, kun punaiseen osumaneliöön ­hajoaa PST-kuula.</item>
+        <item>Tavallisilla kuulilla ei saa ampua ajoneuvoa. Tavallisilla kuulilla ajoneuvoja ampuvat pelaajat eliminoidaan välittömästi tuomareiden toimesta. Tuomari voi myös poistaa pelaajan pelistä loppuerän ajaksi. HUOM! Jos ajoneuvoa häiritään tavallisilla kuulilla, voi tuomari palauttaa sen takaisin peliin tilanteen arvioituaan!</item>
+        <item> </item>
+        <item>Ajoneuvojen tunnistaminen:</item>
+        <item>Ajoneuvoissa, jotka ovat pelissä mukana tuhottavina ajoneuvoina, on joukkueen väriä tunnustava lippu. Liputtomia ajoneuvoja ei saa ampua, vaikka ne kuljettaisivatkin pelaajia. Eliminoidun ajoneuvon tunnistaa keltaisesta vilkkuvalosta.</item>
+    </string-array>
+
+    <string-array name="kilvet">
+        <item>Pelissä on mahdollista käyttää suojalilpiä.</item>
+        <item>Joukkueilla voi olla rajoitettu määrä kilpiä, joten jos olet harkinnut suojakilven tuomista peliin ota yhteyttä joukkueeseesi ja katso tarkemmat ohjeet verkko-osoitteesta: www.suurpeli.fi/ohjeet/kilpisaanto</item>
+        <item> </item>
+        <item>Yleiset ohjeet kilven käytöstä pelin aikana ovat:</item>
+        <item>Kilpi tulee merkitä joukkuevärillä. Vastustajan kilpeä EI saa käyttää!
+                Vain oman joukkueen tämän vuoden Suurpeliin tarkoitettua kilpeä saa käyttää kilpenä. Esimerkiksi kentältä löytyviä vanereita tai aikaisempien vuosien kilpiä Ei saa käyttää.
+                Eliminoitu pelaaja SAA viedä kilpensä itse pois kentältä!</item>
+    </string-array>
+
+    <string-array name="pelinkulku">
+        <item>Peli alkaa valopistoolin laukauksesta – ei tehostepaukuista! Erä päättyy ”ERÄ OHI” -huutoihin. Toistakaa huudot kuullessanne ne!
+Erän pituus on 100 minuuttia, jonka aikana hyökkäävät joukkueet pyrkivät valloittamaan pelikentän alueella olevia lippuasemia etenemällä pelikenttää myötäpäivään, numero­järjestyksessä, lippuasema kerrallaan. Hyökkäävä joukkue ei saa tehdä hyökkäyksiä vasta­päivään kentän ympäri! Puolustava joukkue pyrkii pysäyttämään hyökkäyksen. Lippu­­asemia on 9 ja mikäli hyökkäävä joukkue saa kaikki 9 vallattua ennen erän loppua, jatkuu erä katkotta seuraavalle kierrokselle kunnes erän aika loppuu. Kustakin lippuasemasta saa pisteitä sen verran kuin erässä on kulunut minutteja valtaushetkellä. Lippuasema on vallattu aktiivisen hyökkäävän pelaajan kosketettua lippua yhtäjaksoisesti 20 sekunnin ajan tulematta eliminoiduksi. Valtauksen jälkeen tuomari ottaa lipun ja siirtää sen seuraavalle asemalle vallattavaksi. Jäljessä kulkevat tuomarit ohjaavat kentälle jääneet pelaajat pois etenevän rintaman takaa.
+</item>
+        <item>Jotta joukkueet voivat saada pisteitä jokaisessa pelattavassa erässä, saa myös puolustava joukkue pisteitä onnistumisensa mukaan. Puolustavan joukkueen komentaja ilmoittaa ennen erän alkua päätuomarille lippuaseman, jonka puolustamisesta haluavat pisteitä. Tätä ei kerrota hyökkääville joukkueille järjestävän tahon toimesta. Hyökkäävät joukkueet eivät saa pisteitä ko. lippuaseman valtaamisesta, mutta puolustava joukkue saa pisteitä seuraavan kaavan mukaisesti: ((Aika minuutteina erän alusta  x10)/valitun lippuaseman numero) *π. Puolustuspisteet määräytyvät ko. lippuaseman valtaushetkestä. Jos puolustus valitsee lippuaseman 9 ja hyökkäävät joukkueet eivät saa sitä vallattua erän aikana, saa puolustava joukkue 1000/9*π = 348 pistettä. Vastaavasti valitsemalla 1. lippuaseman ja pitämällä sitä 20 minuuttia, saavat puolustajat 628 pistettä.</item>
+
+    </string-array>
+
+    <string-array name="respat">
+        <item>Keskellä kenttää, huoltoalueen ympärillä kahdella puolella on Respat, eli respawn-paikat A ja B. Hyökkääjien ja puolustajien respat vaihtuvat pelin edetessä aina sen mukaisesti mikä kulloinkin on viimeisin  hyökkääjien valtaama lipuuasema.
+            Respojen toimintaa ohjaa respatuomari, joka päättää viimekädessä mitä respaa tulee käyttää.
+        </item>
+    </string-array>
+
+    <string-array name="mustajoukkue">
+        <item>Pelialueella liikkuu musta joukkue, jonka tarkoituksena on aiheuttaa hämminkiä pelaamalla kaikkia muita joukkueita vastaan. Musta joukkue ei pelaa suurpelin voitosta, eikä se kerää pisteitä.</item>
+    </string-array>
+
+    <string-array name="ajoohje">
+        <item>Google maps linkki joku kaunis päivä</item>
+    </string-array>
+
+    <string-array name="pmrkanavat">
+        <item>1. punainen</item>
+        <item>2. punainen</item>
+        <item>3. tuomarien varakanava</item>
+        <item>4. tuomarit</item>
+        <item>5. keltainen</item>
+        <item>6. keltainen</item>
+        <item>7. vihreä</item>
+        <item>8. vihreä</item>
+    </string-array>
+
+
+    <string-array name="aikataulu">
+        <item>08:00 Portit pelialueelle aukeaa</item>
+        <item>08:30 Tuomaripalaverit</item>
+        <item>10:15 Turva- ja sääntöpuhe tukikohdissa, pelaajien tulee olla pelivalmiina</item>
+        <item>10:30 Ensimmäinen erä, pelaajat kentälle</item>
+        <item>10:40 Ensimmäinen erä alkaa</item>
+        <item>12:20 Ensimmäinen erä päättyy</item>
+        <item>13:45 Toinen erä, pelaajat kentälle</item>
+        <item>13:55 Toinen erä alkaa</item>
+        <item>15:35 Toinen erä päättyy</item>
+        <item>15:35 Ruokatauko</item>
+        <item>17:00 Kolmas erä, pelaajat kentälle</item>
+        <item>17:10 Kolmas erä alkaa</item>
+        <item>18:50 Kolmas erä päättyy</item>
+        <item>19:15 Palkintojen jako!</item>
+    </string-array>
+
+    <string-array name="sattuiko">
+        <item>Pelin aikana ensiavusta huolehtivat tuoma­rei­na toimivat henkilöt. PMR-kanava 4 toi­mii hätäkanavana. Järjestäjällä on vastuuvakuutus, mutta ei pelaaja­koh­taista tapaturmavakuutusta, joten jokai­nen pelaa omalla vastuulla. Omat vapaa-ajan vakuutukset kannattaa olla kun­nossa, kuten aina painttia pelatessa. Tukikohdissa ja pelialueen välittömässä läheisyydessä pitää olla maski päässä!</item>
+    </string-array>
 </resources>
