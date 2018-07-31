@@ -2,7 +2,7 @@
 <head>
   <meta charset=utf-8 />
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firebase Authentication Example</title>
+  <title>Liput</title>
   <link rel="stylesheet" href="css/main.css">
 
     <!--include firebase-->
@@ -13,8 +13,6 @@
     
 
     <script>
-
-      
       // Initialize Firebase
       var config = {
         apiKey: "AIzaSyBPCv10R9am_2_Qtq-XkBvGpF1woHQFTJI",
@@ -37,6 +35,8 @@
     <script>
 
       var timeLeft = -1;
+      var timeBeforePause = 0;
+      var firstPress = true
       //check for auth changes
       function onAuthStateChanged(user){
         //take the user back to index.html if not logged in
@@ -67,7 +67,7 @@
       //update the timer, convert the millsieconds into mm:ss format
       function updateTimer(){
         if(timeLeft < 0){
-          document.getElementById("timer").innerHTML = "no ongoing game.";
+          document.getElementById("timer").innerHTML = "Ei peliä.";
         }
         else{
           timeLeft -= 1000;
@@ -88,11 +88,44 @@
       function cancelTimer(){
         firebase.database().ref('targetTime').set(new Date().getTime());
       }
+
+      //used to pause the game timer
+      function pauseTimer(){
+        
+        if(firstPress){
+          timeBeforePause = new Date().getTime();
+          firstPress = false
+          document.getElementById("pauseButton").innerHTML = "Jatka";
+          //stop updating timer
+          clearInterval(updater);
+          //change pause to true
+          firebase.database().ref("gamePaused").set(true);
+        }
+        //resume
+        else{
+          firstPress = true;
+          var timeNow = new Date().getTime();
+          document.getElementById("pauseButton").innerHTML = "Pause";
+          //still milliseconds
+          var pausedTime = timeNow-timeBeforePause;
+          //get current value in database and add pausedTime to it
+          firebase.database().ref("targetTime").once("value").then(function(snapshot){
+            var valueInDatabase = snapshot.val();
+            //console.log("value now:" + valueInDatabase);
+            //write new value to the database
+            firebase.database().ref("targetTime").set(valueInDatabase+pausedTime);
+          });
+          
+          console.log("time paused: " + (timeNow-timeBeforePause)/1000 + " seconds");
+          //start updating timer again
+          updater = setInterval(updateTimer, 1000);
+          //change pause to false
+          firebase.database().ref("gamePaused").set(false);
+        }
+      }
       
-      //update timer every 1000ms
-      window.setInterval(function(){
-          updateTimer();
-      }, 1000);
+      //update the timer every 1000ms
+      var updater = setInterval(updateTimer, 1000);
 
 
     function navLiput(){
@@ -114,22 +147,21 @@
     <nav>
         <button class="navButton" onclick="navIndex()">Index</button>
         <button class="navButton" onclick="navLiput()">Liput</button>
-        <button class="navButton" onclick="navNews()">News</button>
+        <button class="navButton" onclick="navNews()">Uutiset</button>
     </nav>
     <main>
-      <button onclick="logout()">Logout</button>
-      <h1>Database</h1>
-      <p id="secretText">This is a secret!</p>
+      <button onclick="logout()">Kirjaudu ulos</button>
       <p id="timer"></p>
-      <button onclick="startTimer()">Start timer</button>
-      <button onclick="cancelTimer()">Cancel timer</button>
+      <button onclick="startTimer()">Aloita peli</button>
+      <button id="pauseButton" onclick="pauseTimer()">Pause</button>
+      <button onclick="cancelTimer()">Lopeta peli</button>
       <br><br>
-      <button onclick="pushTest()">Create a flag</button>
-      <button onclick="removeFlag()">Remove last flag</button>
-      <button onclick="clearFlags()">Clear flags</button>
-      <button onclick="activateNextFlag()">Activate next flag</button>
-      <button onclick="deactivateLastFlag()">Deactivate last true</button>
-      <button id = "update" onclick="UpdateFlags()">Update flag postitions</button>
+      <button onclick="pushTest()">Luo lippu</button>
+      <button onclick="removeFlag()">Poista uusin lippu</button>
+      <button onclick="clearFlags()">Poista kaikki</button>
+      <button onclick="activateNextFlag()">Aktivoi seuraava</button>
+      <button onclick="deactivateLastFlag()">Deaktivoi viimeinen</button>
+      <button id = "update" onclick="UpdateFlags()">Päivitä liput</button>
       <div id="map"></div>
       <button value="Toggle visibility" onclick="overlay.toggle();">Toggle overlay</button>
       <table id="lippuData"></table>

@@ -49,13 +49,13 @@ limitations under the License.
       //try to log in
       firebase.auth().signInWithEmailAndPassword(email, password).then(function() {
         //successful login
-        document.getElementById("loginText").innerHTML = "Successfully logged in";
+        document.getElementById("loginText").innerHTML = "Kirjautuminen onnistui!";
         document.getElementById("email").value = "";
         document.getElementById("password").value = "";
       }).catch(function(error){
         //failed login
         console.log(error);
-        alert("login failed");
+        alert("Sisäänkirjautuminen epäonnistui");
       });
     }
 
@@ -63,9 +63,9 @@ limitations under the License.
     function logout(){
       if(firebase.auth().currentUser){
         firebase.auth().signOut().then(function(){
-            alert("signout successful");
+            alert("Kirjauduttiin ulos!");
         }).catch(function(error){
-            alert("signout failed");
+            alert("Uloskirjautuminen epäonnistui");
         });
       }
     }
@@ -76,13 +76,13 @@ limitations under the License.
       var password = document.getElementById("regPassword").value;
       firebase.auth().createUserWithEmailAndPassword(email, password).then(function() {
         //creation successful
-        document.getElementById("regStatus").innerHTML = "Account created successfully";
+        document.getElementById("regStatus").innerHTML = "Rekisteröinti onnistui";
         document.getElementById("email").value = email;
         document.getElementById("regEmail").value = "";
         document.getElementById("regPassword").value = "";
       }).catch(function(error){
         //creation failed
-        document.getElementById("regStatus").innerHTML = "Account creation failed";
+        document.getElementById("regStatus").innerHTML = "Rekisteröinti epäonnistui";
       });
     }
 
@@ -112,14 +112,14 @@ limitations under the License.
       <input class="inputField" name="emailField" id="email" type="email" placeholder="email">
       <input class="inputField" name="passwordField" id="password" type="password" placeholder="password">
       <br>
-      <button class="loginButton" onclick="login()">Login</button>
-      <button class="loginButton" onclick="logout()">Logout</button>
+      <button class="loginButton" onclick="login()">Kirjaudu sisään</button>
+      <button class="loginButton" onclick="logout()">Kirjaudu ulos</button>
       <br>
-      <h4>Don't have an account yet? Register below</h4>
+      <h4>Rekisteröinti: </h4>
       <input class="inputField" name="regEmailField" id="regEmail" type="email" placeholder="email">
       <input class="inputField" name="regPasswordField" id="regPassword" type="password" placeholder="password">
       <br>
-      <button class="loginButton" onclick="register()">Register</button>
+      <button class="loginButton" onclick="register()">Rekisteröidy</button>
       <br>
       <h1 id="regStatus"></h1>
   </main>

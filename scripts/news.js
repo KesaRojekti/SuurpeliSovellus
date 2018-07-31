@@ -129,13 +129,13 @@ function displayTools(){
   var container = document.getElementById("toolsContainer");
 
   var pTitle = document.createElement("P");
-  pTitle.textContent = "Title:";
+  pTitle.textContent = "Otsikko:";
 
   var pContent = document.createElement("P");
-  pContent.textContent = "Content:";
+  pContent.textContent = "Sisältö:";
 
   var pAuthor = document.createElement("P");
-  pAuthor.textContent = "Author: (optional)";
+  pAuthor.textContent = "Tekijä: (valinnainen)";
 
   var iTitle = document.createElement("INPUT");
   iTitle.className = "inputField";
@@ -156,19 +156,19 @@ function displayTools(){
   iAuthor.placeholder = "author";
 
   var createNewsButton = document.createElement("BUTTON");
-  createNewsButton.textContent = "Create news";
+  createNewsButton.textContent = "Luo uutinen";
   createNewsButton.addEventListener("click", createNews);
 
   var clearNewsButton = document.createElement("BUTTON");
-  clearNewsButton.textContent = "Clear all news";
+  clearNewsButton.textContent = "Poista kaikki";
   clearNewsButton.onclick = function(){clearNews()};
 
   var removeOldestButton = document.createElement("BUTTON");
-  removeOldestButton.textContent = "Remove oldest";
+  removeOldestButton.textContent = "Poista vanhin";
   removeOldestButton.onclick = function(){removeOldestNews()};
 
   var removeLatestButton = document.createElement("BUTTON");
-  removeLatestButton.textContent = "Remove latest";
+  removeLatestButton.textContent = "Poista uusin";
   removeLatestButton.onclick = function(){removeLatestNews()};
 
   var br = document.createElement("BR");
