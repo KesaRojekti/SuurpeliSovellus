@@ -86,6 +86,10 @@ limitations under the License.
         document.getElementById("regStatus").innerHTML = "Rekisteröinti epäonnistui";
       });
     }
+    
+    function navKello(){
+      window.location.href="kello.html";
+    }
 
     function navLiput(){
       window.location.href="flags.html";
@@ -103,14 +107,16 @@ limitations under the License.
 </head>
 <body>
   <nav>
-    <button class="navButton" onclick="navIndex()">Index</button>
-    <button class="navButton" onclick="navLiput()">Objectives</button>
-    <button class="navButton" onclick="navNews()">News</button>
+    <button class="navButton" onclick="navIndex()">Kirjautuminen</button>
+    <button class="navButton" onclick="navKello()">Pelikello</button>
+    <button class="navButton" onclick="navLiput()">Liput</button>
+    <button class="navButton" onclick="navNews()">Uutiset</button>
   </nav>
   <main>
       <h1>Suurpeli Auth</h1>
       <p class="loginText" id="loginText"></p>
       <input class="inputField" name="emailField" id="email" type="email" placeholder="email">
+      
       <input class="inputField" name="passwordField" id="password" type="password" placeholder="password">
       <br>
       <button class="loginButton" onclick="login()">Kirjaudu sisään</button>

@@ -48,6 +48,9 @@
         firebase.auth().signOut();
       }
 
+      function navKello(){
+      window.location.href="kello.html";
+    }
 
     function navLiput(){
       window.location.href="flags.html";
@@ -65,16 +68,18 @@
   </head>
   <body>
     <nav>
-        <button class="navButton" onclick="navIndex()">Index</button>
+        <button class="navButton" onclick="navIndex()">Kirjautuminen</button>
+        <button class="navButton" onclick="navKello()">Pelikello</button>
         <button class="navButton" onclick="navLiput()">Liput</button>
         <button class="navButton" onclick="navNews()">Uutiset</button>
     </nav>
     <main>
-      <button onclick="logout()">Kirjaudu ulos</button>
+      
       <h1>Uutiset</h1>
       <div id="toolsContainer">
 
       </div>
+      <button class="logoutButton" onclick="logout()">Kirjaudu ulos</button>
       <table id="newsTable"></table>
     </main>
   </body>

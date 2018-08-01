@@ -1,0 +1,160 @@
+<html onload="getLippuData()">
+<head>
+  <meta charset=utf-8 />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kello</title>
+  <link rel="stylesheet" href="css/main.css">
+
+    <!--include firebase-->
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/5.2.0/firebase-database.js"></script>
+    
+
+    <script>
+      // Initialize Firebase
+      var config = {
+        apiKey: "AIzaSyBPCv10R9am_2_Qtq-XkBvGpF1woHQFTJI",
+        authDomain: "suurpelisovellus.firebaseapp.com",
+        databaseURL: "https://suurpelisovellus.firebaseio.com",
+        projectId: "suurpelisovellus",
+        storageBucket: "suurpelisovellus.appspot.com",
+        messagingSenderId: "654290473334"
+      };
+      firebase.initializeApp(config);
+    </script>
+
+
+    
+    <script>
+
+      var timeLeft = -1;
+      var timeBeforePause = 0;
+      var firstPress = true
+      //check for auth changes
+      function onAuthStateChanged(user){
+        //take the user back to index.html if not logged in
+        if(user === null){
+          window.location.href="index.html";
+        }
+      }
+      //check if you are logged in at page load
+      window.addEventListener('load', function() {
+        firebase.auth().onAuthStateChanged(onAuthStateChanged);
+      }, false);
+
+      function logout(){
+        firebase.auth().signOut();
+      }
+
+      var timerRef = firebase.database().ref('targetTime');
+      timerRef.on('value', function(snapshot) {
+        convertTime(snapshot.val());
+      });
+
+      //convert time into milliseconds left until targetTime
+      function convertTime(timerValue){
+        var ts = new Date().getTime();
+        timeLeft = timerValue - ts;
+      }
+
+      //update the timer, convert the millsieconds into mm:ss format
+      function updateTimer(){
+        if(timeLeft < 0){
+          document.getElementById("timer").innerHTML = "Ei peliä.";
+        }
+        else{
+          timeLeft -= 1000;
+          var minutes = parseInt((timeLeft/1000)/60);
+          var seconds = parseInt((timeLeft/1000)%60);
+          var formattedSeconds = ("0" + seconds).slice(-2);
+          document.getElementById("timer").innerHTML = (minutes+":"+formattedSeconds);
+        }
+      }
+
+      //start the timer, unix timestamp + 90mins
+      function startTimer(){
+        firebase.database().ref('targetTime').set(new Date().getTime()+5400000);
+      }
+
+      //cancel the timer, just set the current unix timestamp
+      //this way it could also double as mark when you cancelled the timer
+      function cancelTimer(){
+        firebase.database().ref('targetTime').set(new Date().getTime());
+      }
+
+      //used to pause the game timer
+      function pauseTimer(){
+        
+        if(firstPress){
+          timeBeforePause = new Date().getTime();
+          firstPress = false
+          document.getElementById("pauseButton").innerHTML = "Jatka";
+          //stop updating timer
+          clearInterval(updater);
+          //change pause to true
+          firebase.database().ref("gamePaused").set(true);
+        }
+        //resume
+        else{
+          firstPress = true;
+          var timeNow = new Date().getTime();
+          document.getElementById("pauseButton").innerHTML = "Pause";
+          //still milliseconds
+          var pausedTime = timeNow-timeBeforePause;
+          //get current value in database and add pausedTime to it
+          firebase.database().ref("targetTime").once("value").then(function(snapshot){
+            var valueInDatabase = snapshot.val();
+            //console.log("value now:" + valueInDatabase);
+            //write new value to the database
+            firebase.database().ref("targetTime").set(valueInDatabase+pausedTime);
+          });
+          
+          console.log("time paused: " + (timeNow-timeBeforePause)/1000 + " seconds");
+          //start updating timer again
+          updater = setInterval(updateTimer, 1000);
+          //change pause to false
+          firebase.database().ref("gamePaused").set(false);
+        }
+      }
+      
+      //update the timer every 1000ms
+      var updater = setInterval(updateTimer, 1000);
+
+
+    function navLiput(){
+      window.location.href="flags.html";
+    }
+
+    function navNews(){
+      window.location.href="news.html";
+    }
+
+    function navIndex(){
+      window.location.href="index.html";
+    }
+    function navKello(){
+      window.location.href="kello.html";
+    }
+ 
+    </script>
+  </head>
+  <body>
+    <nav>
+        <button class="navButton" onclick="navIndex()">Kirjautuminen</button>
+        <button class="navButton" onclick="navKello()">Pelikello</button>
+        <button class="navButton" onclick="navLiput()">Liput</button>
+        <button class="navButton" onclick="navNews()">Uutiset</button>
+    </nav>
+    <main>
+      
+      <p id="timer"></p>
+      <button onclick="startTimer()">Aloita peli</button>
+      <button id="pauseButton" onclick="pauseTimer()">Pause</button>
+      <button onclick="cancelTimer()">Lopeta peli</button>
+      <button class="logoutButton" onclick="logout()">Kirjaudu ulos</button>
+    
+    </main>
+  </body>
+  </html>

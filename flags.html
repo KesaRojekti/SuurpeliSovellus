@@ -53,79 +53,6 @@
         firebase.auth().signOut();
       }
 
-      var timerRef = firebase.database().ref('targetTime');
-      timerRef.on('value', function(snapshot) {
-        convertTime(snapshot.val());
-      });
-
-      //convert time into milliseconds left until targetTime
-      function convertTime(timerValue){
-        var ts = new Date().getTime();
-        timeLeft = timerValue - ts;
-      }
-
-      //update the timer, convert the millsieconds into mm:ss format
-      function updateTimer(){
-        if(timeLeft < 0){
-          document.getElementById("timer").innerHTML = "Ei peliä.";
-        }
-        else{
-          timeLeft -= 1000;
-          var minutes = parseInt((timeLeft/1000)/60);
-          var seconds = parseInt((timeLeft/1000)%60);
-          var formattedSeconds = ("0" + seconds).slice(-2);
-          document.getElementById("timer").innerHTML = (minutes+":"+formattedSeconds);
-        }
-      }
-
-      //start the timer, unix timestamp + 90mins
-      function startTimer(){
-        firebase.database().ref('targetTime').set(new Date().getTime()+5400000);
-      }
-
-      //cancel the timer, just set the current unix timestamp
-      //this way it could also double as mark when you cancelled the timer
-      function cancelTimer(){
-        firebase.database().ref('targetTime').set(new Date().getTime());
-      }
-
-      //used to pause the game timer
-      function pauseTimer(){
-        
-        if(firstPress){
-          timeBeforePause = new Date().getTime();
-          firstPress = false
-          document.getElementById("pauseButton").innerHTML = "Jatka";
-          //stop updating timer
-          clearInterval(updater);
-          //change pause to true
-          firebase.database().ref("gamePaused").set(true);
-        }
-        //resume
-        else{
-          firstPress = true;
-          var timeNow = new Date().getTime();
-          document.getElementById("pauseButton").innerHTML = "Pause";
-          //still milliseconds
-          var pausedTime = timeNow-timeBeforePause;
-          //get current value in database and add pausedTime to it
-          firebase.database().ref("targetTime").once("value").then(function(snapshot){
-            var valueInDatabase = snapshot.val();
-            //console.log("value now:" + valueInDatabase);
-            //write new value to the database
-            firebase.database().ref("targetTime").set(valueInDatabase+pausedTime);
-          });
-          
-          console.log("time paused: " + (timeNow-timeBeforePause)/1000 + " seconds");
-          //start updating timer again
-          updater = setInterval(updateTimer, 1000);
-          //change pause to false
-          firebase.database().ref("gamePaused").set(false);
-        }
-      }
-      
-      //update the timer every 1000ms
-      var updater = setInterval(updateTimer, 1000);
 
 
     function navLiput(){
@@ -139,29 +66,30 @@
     function navIndex(){
       window.location.href="index.html";
     }
-
+    function navKello(){
+      window.location.href="kello.html";
+    }
  
     </script>
   </head>
   <body>
     <nav>
-        <button class="navButton" onclick="navIndex()">Index</button>
+        <button class="navButton" onclick="navIndex()">Kirjautuminen</button>
+        <button class="navButton" onclick="navKello()">Pelikello</button>
         <button class="navButton" onclick="navLiput()">Liput</button>
         <button class="navButton" onclick="navNews()">Uutiset</button>
     </nav>
     <main>
-      <button onclick="logout()">Kirjaudu ulos</button>
-      <p id="timer"></p>
-      <button onclick="startTimer()">Aloita peli</button>
-      <button id="pauseButton" onclick="pauseTimer()">Pause</button>
-      <button onclick="cancelTimer()">Lopeta peli</button>
+      
+
       <br><br>
+      <button class="activateFlagButton" onclick="activateNextFlag()">Aktivoi seuraava</button>
+      <button class="deactivateFlagButton" onclick="deactivateLastFlag()">Deaktivoi viimeinen</button>
       <button onclick="removeFlag()">Poista uusin lippu</button>
       <button onclick="clearFlags()">Poista kaikki</button>
-      <button onclick="activateNextFlag()">Aktivoi seuraava</button>
-      <button onclick="deactivateLastFlag()">Deaktivoi viimeinen</button>
       <div id="map"></div>
       <button value="Toggle visibility" onclick="overlay.toggle();">Toggle overlay</button>
+      <button class="logoutButton" onclick="logout()">Kirjaudu ulos</button>
       <table id="lippuData"></table>
     </main>
   </body>

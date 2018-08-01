@@ -180,6 +180,7 @@ function displayTools(){
   container.appendChild(pAuthor);
   container.appendChild(iAuthor);
   container.appendChild(br);
+  
 
   container.appendChild(createNewsButton);
   container.appendChild(clearNewsButton);
