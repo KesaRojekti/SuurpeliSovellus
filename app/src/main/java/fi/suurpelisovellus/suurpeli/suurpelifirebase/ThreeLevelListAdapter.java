@@ -1,6 +1,8 @@
 package fi.suurpelisovellus.suurpeli.suurpelifirebase;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -90,6 +92,21 @@ public class ThreeLevelListAdapter extends BaseExpandableListAdapter {
     public View getChildView(int groupPosition, int childPosition, boolean isLastChild, View convertView, ViewGroup parent) {
 
         final SecondLevelExpandableListView secondLevelELV = new SecondLevelExpandableListView(context);
+
+        secondLevelELV.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v, int groupPosition, int childPosition, long id) {
+                //Log.d("child", "" + groupPosition + " " + childPosition + " " + id);
+                if(groupPosition == 0 && childPosition == 0 && id == 0){
+                    Uri navUri = Uri.parse("http://google.com/maps/dir/Current+Location/Jämsän+Paintball+Ltd,+Ahojärventie+79,42100+Jämsä");
+                    Intent mapIntent = new Intent(android.content.Intent.ACTION_VIEW, navUri);
+                    //mapIntent.setPackage("com.google.android.apps.maps")
+
+                    v.getContext().startActivity(mapIntent);
+                }
+                return false;
+            }
+        });
 
         String[] headers = secondLevel.get(groupPosition);
 

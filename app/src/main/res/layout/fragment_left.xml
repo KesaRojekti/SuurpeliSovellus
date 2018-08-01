@@ -8,8 +8,6 @@
     android:tag="leftFrag"
     tools:context=".LeftFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-
     <FrameLayout
         android:id="@+id/childView"
         android:layout_width="match_parent"
@@ -24,14 +22,14 @@
     </FrameLayout>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/gametimeTitle"
         android:layout_width="0dp"
         android:layout_height="26dp"
         android:layout_marginBottom="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:text="Peli:"
+        android:text="@string/round_text"
         android:textAlignment="center"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

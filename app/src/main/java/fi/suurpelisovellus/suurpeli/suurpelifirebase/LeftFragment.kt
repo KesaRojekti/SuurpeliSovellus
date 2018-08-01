@@ -7,10 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
 import android.support.v4.app.NotificationCompat
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -125,6 +122,7 @@ class LeftFragment : Fragment() {
 
         //start updating timer
         updateTimer.run()
+
     }
 
 
@@ -215,7 +213,6 @@ class LeftFragment : Fragment() {
         stackBuilder.addNextIntentWithParentStack(returnIntent)
         val returnPendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT)
 
-        Log.d("shit", "" + showNotifications)
         //start pushing notification if necessary
         if(timeLeft > 0 && showNotifications!!){
 

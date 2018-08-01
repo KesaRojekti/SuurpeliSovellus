@@ -139,7 +139,7 @@ Erän pituus on 100 minuuttia, jonka aikana hyökkäävät joukkueet pyrkivät v
     </string-array>
 
     <string-array name="ajoohje">
-        <item>Google maps linkki joku kaunis päivä</item>
+        <item>Tap to open google maps directions</item>
     </string-array>
 
     <string-array name="pmrkanavat">
