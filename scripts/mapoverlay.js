@@ -1,17 +1,20 @@
 var overlay;
+var map;
+var bounds;
+var srcImage;
 Suurpeli.prototype = new google.maps.OverlayView();
 
 // Initialize the map and the custom overlay.
 
 function initMap() {
-  var map = new google.maps.Map(document.getElementById('map'), {
+  map = new google.maps.Map(document.getElementById('map'), {
     zoom: 17,
     center: {lat: 61.81550458885635, lng: 25.170653930688445},
     mapTypeId: 'satellite'
   });
 
   
-  var bounds = new google.maps.LatLngBounds(
+  bounds = new google.maps.LatLngBounds(
   
     //eka alhaalle ja toinen oikealle
     new google.maps.LatLng(61.813622178968614, 25.163429856591765),
@@ -19,7 +22,7 @@ function initMap() {
     new google.maps.LatLng(61.81729408832565, 25.17466736193234));
 
 // The photograph is courtesy of the U.S. Geological Survey.
-var srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
+ srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
 
 
 
@@ -30,7 +33,9 @@ var srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
         marker.push(new google.maps.Marker({position: location,
            map: map,
             draggable: true,
-          icon: pinSymbol("#FFF")}));
+          icon: pinSymbol("#FFF")
+        }));
+          UpdateFlags();
       }); 
       
 

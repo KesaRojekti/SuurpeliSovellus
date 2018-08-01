@@ -21,22 +21,25 @@ var lippuRef = firebase.database().ref('liput');
 
 //listen for changes
 lippuRef.on('child_added', function(){
-  
+  //console.log("child_added");
   getLippuData();
 });
 
 lippuRef.on('child_changed', function(){
- 
+ //console.log("child_changed");
   getLippuData();
 });
 
 lippuRef.on('child_removed', function(){
- 
+  initMap();
+  marker = [];
   getLippuData();
 });
 
 //create an empty array for all lippu objects
 var lippuarray = [];
+var marker = [];
+
 
 
 //get all children and populate table
@@ -46,6 +49,7 @@ function getLippuData(){
     
     //placeholder array
     var snapShotArr = [];
+    var markerSnapArr = [];
     snapshot.forEach(function(childSnapshot){
       var childKey = childSnapshot.key;
       var childData = childSnapshot.val();
@@ -60,15 +64,26 @@ function getLippuData(){
       "<td>" + "isActive?:" + "</td>" + 
       "<td>" + childData.active + "</td>" + 
       "</tr>";
+      var locations = childData.LatLng.split(",", 2);
+      var lat = parseFloat(locations[0]);
+      var lng = parseFloat(locations[1]);
+      var loc = new google.maps.LatLng(lat, lng);
       
-      
-      
+      var m = new google.maps.Marker({
+        position: loc,
+        map: map,
+        icon: pinSymbol("#FFF")
+      });
+      markerSnapArr.push(m);
     });
-    console.log("snapShotArr len: " + snapShotArr.length);
+    //console.log("snapShotArr len: " + snapShotArr.length);
 
     //assign placeholder array to the instance variable array
     lippuarray = snapShotArr;
-    console.log("lippuarr len: " + lippuarray.length);
+    marker = markerSnapArr;
+    count = markerSnapArr.length;
+    colorFlags();
+    //console.log("lippuarr len: " + lippuarray.length);
     /*don't know what this is used for, but you have to pass an array to writeLippuData()!!
      //checks markers
      if(lippuarray.length > 0){
@@ -79,9 +94,10 @@ function getLippuData(){
 }
 
 
+
 //add a flag
 var flagsArrayCont;
-var marker = [];
+
  function pushTest(){
    marker = new google.maps.Marker({position: start, map: map, draggable: true});
   writeLippuData(lippuarray);
@@ -180,15 +196,11 @@ function activateNextFlag(){
     
    if(lippuarray[i].active == false){
     lippuarray[i].active = true;
-
-    marker[i].setIcon(pinSymbol("#FF0"));
-    if(marker[i - 1] != undefined){
-      marker[i - 1].setIcon(pinSymbol("#0F0")); 
-    }
-     break;
+    break;
     }
   }
   updateFlagData();
+  colorFlags();
 }
 
 
@@ -216,19 +228,27 @@ function deactivateLastFlag(){
 //FF0 = keltainen marker[i].setIcon(pinSymbol("#FF0"));
 //viimeinen true = keltainen (aktiivinen lippu)
 //color flags according to lippu active state
+
 function colorFlags(){
   for(var i = 0; i < marker.length; i++){
     if(lippuarray[i].active == true){
       //find first non active flag
-      if(lippuarray[i+1].active == false){
-        //if i+1 is false a.k.a (this flag is the last true) color it yellow
+      if(i != lippuarray.length-1){
+        if(lippuarray[i+1].active == false){
+          //if i+1 is false a.k.a (this flag is the last true) color it yellow
+          marker[i].setIcon(pinSymbol("#FF0"));
+        }
+        else
+        {
+          //if this isn't the last true flag, color it green
+          marker[i].setIcon(pinSymbol("#0F0"));
+        }
+      }
+      else{
+        //last flag when i+1 is over the length
         marker[i].setIcon(pinSymbol("#FF0"));
       }
-      else
-      {
-        //if this isn't the last true flag, color it green
-        marker[i].setIcon(pinSymbol("#0F0"));
-      }
+      
     }
     else
     {
@@ -237,3 +257,6 @@ function colorFlags(){
     }
   }
 }
+
+
+
