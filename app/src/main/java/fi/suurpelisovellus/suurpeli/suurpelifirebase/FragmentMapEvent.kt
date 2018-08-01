@@ -6,6 +6,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
+import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -26,6 +27,7 @@ import kotlinx.android.synthetic.main.layout_map_event.*
 class FragmentMapEvent: Fragment(),
         OnMapReadyCallback,
         View.OnClickListener {
+    
 
     private lateinit var eventMap: GroundOverlay
     private lateinit var eventMapGrid: GroundOverlay
@@ -177,6 +179,7 @@ class FragmentMapEvent: Fragment(),
         return mView
     }
 
+
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
         // set the eventMap overlay from assets folder
@@ -184,12 +187,16 @@ class FragmentMapEvent: Fragment(),
             image(BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png"))
             positionFromBounds(eventLatLngBounds)
         })
+
         // set the eventMapGrid overlay from assets folder
         eventMapGrid = mMap.addGroundOverlay(GroundOverlayOptions().apply {
             image(BitmapDescriptorFactory.fromAsset("map_grit_smallest.png"))
             positionFromBounds(eventLatLngBounds)
             visible(false)
         })
+
+
+
         // set the imageView by id
         eventMapInfo = mView.findViewById(R.id.mapInfo)
 
