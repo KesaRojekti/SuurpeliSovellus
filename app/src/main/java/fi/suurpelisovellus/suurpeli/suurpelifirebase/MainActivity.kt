@@ -14,8 +14,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
-
 import kotlinx.android.synthetic.main.activity_main.*
+
+
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -38,20 +40,20 @@ class MainActivity : AppCompatActivity() {
         //create a sharedPreferences file if it doesn't exist already, and default notification setting to TRUE
         val sharedPref = getSharedPreferences(getString(R.string.settings_notifications_key), Context.MODE_PRIVATE)
         val sharedKey = getString(R.string.settings_notifications_key)
-        if(!sharedPref.contains(sharedKey)){
+        if (!sharedPref.contains(sharedKey)) {
             val editor = sharedPref?.edit()
             editor?.putBoolean(sharedKey, true)
             editor?.apply()
         }
 
         //get current user
-        val user:FirebaseUser? = auth.currentUser
+        val user: FirebaseUser? = auth.currentUser
 
         //add listener to the user -> if you log out start login activity again
         val authListener = object : FirebaseAuth.AuthStateListener {
             override fun onAuthStateChanged(fbauth: FirebaseAuth) {
                 val usr = fbauth.currentUser
-                if (usr == null){
+                if (usr == null) {
                     val loginIntent: Intent = Intent(this@MainActivity, SigninActivity::class.java)
                     loginIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     //uncomment these if you are using login again

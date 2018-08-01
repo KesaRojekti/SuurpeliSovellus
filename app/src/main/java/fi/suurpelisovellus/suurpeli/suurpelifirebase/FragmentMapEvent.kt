@@ -1,12 +1,13 @@
 package fi.suurpelisovellus.suurpeli.suurpelifirebase
+
 import android.Manifest
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentTransaction
 import android.support.v4.content.ContextCompat
 import android.view.LayoutInflater
 import android.view.View
@@ -20,8 +21,6 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.layout_map_event.*
-
-
 
 
 class FragmentMapEvent: Fragment(),
@@ -38,6 +37,10 @@ class FragmentMapEvent: Fragment(),
     private lateinit var btnEventMapInfo: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var marker: Marker
+    private lateinit var myLocation: Marker
+    private lateinit var locationCallback: LocationCallback
+    private lateinit var listLocationList: MutableList<Location>
+    private lateinit var currentLocation: Location
     private var markerOptions: MarkerOptions = MarkerOptions()
     private var eventMapGridOnOff = true
     private var eventMapInfoOnOff = true
@@ -49,17 +52,16 @@ class FragmentMapEvent: Fragment(),
     private var initialCameraPosition = LatLng(
             ((eventSouthWestCoordinate.latitude + eventNorthEastCoordinate.latitude) / 2f),
             ((eventSouthWestCoordinate.longitude + eventNorthEastCoordinate.longitude) / 2f))
-    private lateinit var myLocation: Marker
-    private lateinit var locationCallback: LocationCallback
-    private lateinit var listLocationList: MutableList<Location>
-    private lateinit var currentLocation: Location
-    private var requestingLocationUpdates:Boolean = true
 
     private var listMarkersList = mutableListOf<Marker>()
     private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
     private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
-
+    // The childEventListener for Firebase
     private val childEventListener = object : ChildEventListener{
+        /** The following override methods are used to update information on markers that are displayed
+         * to the client after respective marker(s) have received updates manage objectives function is
+         * called to manage the markers that are displayed.
+         */
         override fun onChildAdded(dataSnapShot: DataSnapshot, previousChildName: String?) {
             val lippu: Lippu? = dataSnapShot.getValue(Lippu::class.java)
             if(lippu != null) {
@@ -126,36 +128,42 @@ class FragmentMapEvent: Fragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.layout_map_event, container, false)
+        // Set the buttons with their respective Views by id
         btnEventMapGrid = mView.findViewById(R.id.buttonEventMapGrid)
         btnEventMapGrid.setOnClickListener(this)
         btnEventMapInfo = mView.findViewById(R.id.buttonMapInfo)
         btnEventMapInfo.setOnClickListener(this)
         mapFragment = childFragmentManager
                 .findFragmentById(R.id.map_event) as SupportMapFragment
-
+        // set fusedLocationClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
 
         mapFragment.getMapAsync(this)
 
+        // Determine the locationCallback
         locationCallback = object : LocationCallback() {
             override fun onLocationResult(locationResult: LocationResult?) {
                 if (locationResult != null) {
-                    listLocationList = locationResult!!.locations
+                    listLocationList = locationResult.locations
+                    // Store user's location updates to listLocationList
                     if (listLocationList.size != 0){
+                        // Update current location to currentLocation variable
+                        // by retrieving the most recent addition to the list.
                         currentLocation = listLocationList[listLocationList.size -  1]
 
                         var latitudeLongitude = LatLng(currentLocation.latitude, currentLocation.longitude)
-
+                        // Removes the existing myLocation marker from the map before adding a new one
                         if(markerOptions.position != null){
                             myLocation.remove()
                         }
-
+                        // Add myLocation marker to the map
                         myLocation = mMap.addMarker(MarkerOptions()
                                 .position(latitudeLongitude)
                                 .title("My Location"))
 
                         markerOptions.position(latitudeLongitude)
-
+                        // Execute the below code only if the user is within the bounds of the event.
+                        // Centers camera on the user.
                         if(eventNorthEastCoordinate.latitude > myLocation.position.latitude
                                 && eventSouthWestCoordinate.latitude < myLocation.position.latitude
                                 && eventSouthWestCoordinate.longitude < myLocation.position.longitude
@@ -171,27 +179,28 @@ class FragmentMapEvent: Fragment(),
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-
+        // set the eventMap overlay from assets folder
         eventMap = mMap.addGroundOverlay(GroundOverlayOptions().apply {
             image(BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png"))
             positionFromBounds(eventLatLngBounds)
         })
-
+        // set the eventMapGrid overlay from assets folder
         eventMapGrid = mMap.addGroundOverlay(GroundOverlayOptions().apply {
             image(BitmapDescriptorFactory.fromAsset("map_grit_smallest.png"))
             positionFromBounds(eventLatLngBounds)
             visible(false)
         })
+        // set the imageView by id
         eventMapInfo = mView.findViewById(R.id.mapInfo)
 
 
-
+        // Set the frequency and accuracy of location requests
         val locationRequest = LocationRequest().apply {
             interval = 10000
             fastestInterval = 10000
             priority = LocationRequest.PRIORITY_HIGH_ACCURACY
         }
-
+        // check, and request access fine location permission from the user
         if (ContextCompat.checkSelfPermission(this.context!!,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this.activity!!, arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
@@ -199,9 +208,10 @@ class FragmentMapEvent: Fragment(),
         }else {
 
         }
+        // set locationCallback, and DatabaseReference
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
-        // Set the initial camera settings to display eventGroundOverlay
+        // Set the initial camera settings to display eventGroundOverlay, and disable user map scroll
         mMap.uiSettings.isScrollGesturesEnabled = false
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
         mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
@@ -214,25 +224,17 @@ class FragmentMapEvent: Fragment(),
 
     }
 
-    /*override fun onPause() {
-        super.onPause()
-        if (fusedLocationClient != null) {
-            fusedLocationClient.removeLocationUpdates(locationCallback)
-        }
-    }*/
-
     /**
-     * A Button to Place new markers to the map
+     * This function is used to determine what actions will be taken in accordance to the button pressed.
      *
-     * This method Checks for any mismatches between the listCoordinates, and listCheckList variables.
-     * In case of a mismatch, the item that does not exist in listCheckList is added to the list in question
-     * and a new marker is added to listMarkersList using the new coordinates. After the listCheckList, and
-     * listMarkersList have been updated, listCoordinates is cleared.
+     * Each ON and OFF if-clause is regualted by a respective boolean switch
      *
-     * Markers are named in an ascending order in the sequence they are created.
+     * The function contains if-clauses for displaying a grid over the eventMap,
+     * and for mapInfo-imageview.
      */
 
     override fun onClick(btnEventMap: View) {
+        // ON/OFF button (boolean switch) for map grid decides, which overlay (eventMap or eventMapGrid) is displayed.
         if (btnEventMap == btnEventMapGrid) {
             if (eventMapGridOnOff) {
                 eventMapGrid.isVisible = true
@@ -244,7 +246,7 @@ class FragmentMapEvent: Fragment(),
                 eventMapGridOnOff = true
             }
         }
-
+        // ON/OFF button (boolean switch) for mapInfo, which is either gone or visible.
         if(btnEventMap == btnEventMapInfo){
             if(eventMapInfoOnOff){
                 mapInfo.visibility = VISIBLE
@@ -258,6 +260,14 @@ class FragmentMapEvent: Fragment(),
         }
     }
 
+    /**
+     * This function is used to control the visibility and coloring of the objectives
+     *
+     * ManageObjectives loops through the listMarkerList looking for first non-visible marker, coloring
+     * every marker on the list green.
+     * Once the first non-visible counter is found the function colors the previous marker in the list
+     * as yellow (current objective)
+     */
     fun manageObjectives(){
         if(listMarkersList.size > 0) {
             var intListIndexCounter = 0
