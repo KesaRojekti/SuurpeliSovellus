@@ -21,6 +21,7 @@
     <string name="ryhm_title">Ryhmänjohtaja</string>
     <string name="sektori_title">Sektorinjohtaja</string>
     <string name="komentaja_title">Komentaja</string>
+    <string name="round_text">Round timer:</string>
     <string name="no_game_text">Round over</string>
     <string name="gametime_notification_title">Game time remaining:</string>
 

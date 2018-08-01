@@ -148,7 +148,7 @@ class LeftFragment : Fragment() {
                 mHandler.removeCallbacks(this)
             }
             //if the game is paused let users know, and don't update the timer
-            if(gamePaused){
+            else if(gamePaused){
                 timerValueText.text = "game is paused"
             }
             else

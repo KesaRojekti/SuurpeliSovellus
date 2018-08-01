@@ -13,6 +13,8 @@ import android.view.View
 import android.view.View.*
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageButton
+import android.widget.ImageView
 import com.google.android.gms.location.*
 import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
@@ -26,30 +28,27 @@ class FragmentMapEvent: Fragment(),
         OnMapReadyCallback,
         View.OnClickListener {
 
-
-    private lateinit var eventGroundOverlay: GroundOverlay
-    private lateinit var eventGroundOverlayInfo: GroundOverlay
+    private lateinit var eventMap: GroundOverlay
+    private lateinit var eventMapGrid: GroundOverlay
+    private lateinit var eventMapInfo: ImageView
     private lateinit var mView: View
     private lateinit var mapFragment: SupportMapFragment
     private lateinit var mMap: GoogleMap
-    private lateinit var btnEventOverlay: Button
-    private lateinit var btnEventOverlayInfo: Button
+    private lateinit var btnEventMapGrid: ImageButton
+    private lateinit var btnEventMapInfo: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private lateinit var marker: Marker
     private var markerOptions: MarkerOptions = MarkerOptions()
-    private var eventOverlayOnOff = true
-    private var eventOverlayInfoOnOff = false
-    private var eventSouthWestCoordinate = LatLng(61.813422, 25.16621)
-    private var eventNorthEastCoordinate = LatLng(61.817262, 25.174791)
+    private var eventMapGridOnOff = true
+    private var eventMapInfoOnOff = true
+    private var eventSouthWestCoordinate = LatLng(61.813022, 25.16621)
+    private var eventNorthEastCoordinate = LatLng(61.817262, 25.176301)
     private var eventLatLngBounds: LatLngBounds = LatLngBounds(
             eventSouthWestCoordinate,
             eventNorthEastCoordinate)
     private var initialCameraPosition = LatLng(
             ((eventSouthWestCoordinate.latitude + eventNorthEastCoordinate.latitude) / 2f),
             ((eventSouthWestCoordinate.longitude + eventNorthEastCoordinate.longitude) / 2f))
-    private var eventLatLngInfoBounds = LatLngBounds(
-            LatLng(eventSouthWestCoordinate.latitude, eventSouthWestCoordinate.longitude - ((1280/901)*(eventNorthEastCoordinate.latitude - eventSouthWestCoordinate.latitude))),
-            LatLng(eventNorthEastCoordinate.latitude, eventSouthWestCoordinate.longitude))
     private lateinit var myLocation: Marker
     private lateinit var locationCallback: LocationCallback
     private lateinit var listLocationList: MutableList<Location>
@@ -127,23 +126,15 @@ class FragmentMapEvent: Fragment(),
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         mView = inflater.inflate(R.layout.layout_map_event, container, false)
-        btnEventOverlay = mView.findViewById(R.id.buttonOverlay)
-        btnEventOverlay.setOnClickListener(this)
-        btnEventOverlayInfo = mView.findViewById(R.id.buttonOverlayInfo)
-        btnEventOverlayInfo.setOnClickListener(this)
+        btnEventMapGrid = mView.findViewById(R.id.buttonEventMapGrid)
+        btnEventMapGrid.setOnClickListener(this)
+        btnEventMapInfo = mView.findViewById(R.id.buttonMapInfo)
+        btnEventMapInfo.setOnClickListener(this)
         mapFragment = childFragmentManager
                 .findFragmentById(R.id.map_event) as SupportMapFragment
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
 
-
-        if (mapFragment == null) {
-            var fm: FragmentManager? = fragmentManager
-            var ft: FragmentTransaction? = fm?.beginTransaction()
-            mapFragment = SupportMapFragment.newInstance()
-            ft?.replace(R.id.map_event, mapFragment)
-                    ?.commit()
-        }
         mapFragment.getMapAsync(this)
 
         locationCallback = object : LocationCallback() {
@@ -164,6 +155,13 @@ class FragmentMapEvent: Fragment(),
                                 .title("My Location"))
 
                         markerOptions.position(latitudeLongitude)
+
+                        if(eventNorthEastCoordinate.latitude > myLocation.position.latitude
+                                && eventSouthWestCoordinate.latitude < myLocation.position.latitude
+                                && eventSouthWestCoordinate.longitude < myLocation.position.longitude
+                                && eventNorthEastCoordinate.longitude > myLocation.position.longitude) {
+                            mMap.moveCamera(CameraUpdateFactory.newLatLng(myLocation.position))
+                        }
                     }
                 }
             }
@@ -174,16 +172,19 @@ class FragmentMapEvent: Fragment(),
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        eventGroundOverlay = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("SP18_paino_svg.png"))
+        eventMap = mMap.addGroundOverlay(GroundOverlayOptions().apply {
+            image(BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png"))
             positionFromBounds(eventLatLngBounds)
         })
 
-        eventGroundOverlayInfo = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("SP18Info.jpg"))
-            positionFromBounds(eventLatLngInfoBounds)
+        eventMapGrid = mMap.addGroundOverlay(GroundOverlayOptions().apply {
+            image(BitmapDescriptorFactory.fromAsset("map_grit_smallest.png"))
+            positionFromBounds(eventLatLngBounds)
             visible(false)
         })
+        eventMapInfo = mView.findViewById(R.id.mapInfo)
+
+
 
         val locationRequest = LocationRequest().apply {
             interval = 10000
@@ -201,10 +202,11 @@ class FragmentMapEvent: Fragment(),
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
         // Set the initial camera settings to display eventGroundOverlay
+        mMap.uiSettings.isScrollGesturesEnabled = false
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
         mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((initialCameraPosition), 16f))
-        mMap.setMinZoomPreference(15f)
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom((initialCameraPosition), 18f))
+        mMap.setMinZoomPreference(16f)
     }
 
     override fun onResume() {
@@ -230,41 +232,28 @@ class FragmentMapEvent: Fragment(),
      * Markers are named in an ascending order in the sequence they are created.
      */
 
-    override fun onClick(btnEventGroundOverlayOnOff: View) {
-        if(btnEventGroundOverlayOnOff == btnEventOverlay) {
-            if (eventOverlayOnOff) {
-                eventGroundOverlay.isVisible = false
-                eventOverlayOnOff = false
-                mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL)
-                buttonOverlay.text = "Event Map: OFF"
-                mMap.setLatLngBoundsForCameraTarget(null)
-                mMap.setMinZoomPreference(2f)
-                btnEventOverlayInfo.visibility = GONE
-                if(eventGroundOverlayInfo.isVisible){
-                    eventGroundOverlayInfo.isVisible = false
-                }
+    override fun onClick(btnEventMap: View) {
+        if (btnEventMap == btnEventMapGrid) {
+            if (eventMapGridOnOff) {
+                eventMapGrid.isVisible = true
+                eventMap.isVisible = false
+                eventMapGridOnOff = false
             } else {
-                eventGroundOverlay.isVisible = true
-                eventOverlayOnOff = true
-                mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
-                buttonOverlay.text = "Event Map: ON"
-                mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
-                mMap.moveCamera(CameraUpdateFactory.newLatLngBounds(eventLatLngBounds, 0))
-                mMap.setMinZoomPreference(15f)
-                btnEventOverlayInfo.visibility = VISIBLE
-                if (eventOverlayInfoOnOff){
-                    eventGroundOverlayInfo.isVisible = true
-                }
+                eventMap.isVisible = true
+                eventMapGrid.isVisible = false
+                eventMapGridOnOff = true
             }
-        }else if (btnEventGroundOverlayOnOff == btnEventOverlayInfo) {
-            if (eventOverlayInfoOnOff) {
-                btnEventOverlayInfo.text = "Info: OFF"
-                eventGroundOverlayInfo.isVisible = false
-                eventOverlayInfoOnOff = false
+        }
+
+        if(btnEventMap == btnEventMapInfo){
+            if(eventMapInfoOnOff){
+                mapInfo.visibility = VISIBLE
+                btnEventMapInfo.text = "Info: ON"
+                eventMapInfoOnOff = false
             } else {
-                btnEventOverlayInfo.text = "Info: ON"
-                eventGroundOverlayInfo.isVisible = true
-                eventOverlayInfoOnOff = true
+                mapInfo.visibility = GONE
+                btnEventMapInfo.text = "Info: OFF"
+                eventMapInfoOnOff = true
             }
         }
     }
