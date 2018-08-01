@@ -119,6 +119,9 @@ class LeftFragment : Fragment() {
         //add news fragment
         childFragmentManager.beginTransaction().add(R.id.childView, ChildFragment()).commit()
 
+        //add schedule fragment
+        childFragmentManager.beginTransaction().add(R.id.scheduleView, ScheduleFragment()).commit()
+
 
         //start updating timer
         updateTimer.run()
