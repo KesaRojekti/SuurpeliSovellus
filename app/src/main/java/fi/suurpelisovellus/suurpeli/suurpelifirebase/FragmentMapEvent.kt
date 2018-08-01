@@ -27,7 +27,7 @@ import kotlinx.android.synthetic.main.layout_map_event.*
 class FragmentMapEvent: Fragment(),
         OnMapReadyCallback,
         View.OnClickListener {
-    
+
 
     private lateinit var eventMap: GroundOverlay
     private lateinit var eventMapGrid: GroundOverlay
