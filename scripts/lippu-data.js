@@ -72,6 +72,7 @@ function getLippuData(){
       var m = new google.maps.Marker({
         position: loc,
         map: map,
+        
         icon: pinSymbol("#FFF")
       });
       markerSnapArr.push(m);

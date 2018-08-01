@@ -17,12 +17,12 @@ function initMap() {
   bounds = new google.maps.LatLngBounds(
   
     //eka alhaalle ja toinen oikealle
-    new google.maps.LatLng(61.813622178968614, 25.163429856591765),
+    new google.maps.LatLng(61.813022, 25.16621),
     //ylös ja oikealle
-    new google.maps.LatLng(61.81729408832565, 25.17466736193234));
+    new google.maps.LatLng(61.817262, 25.176301));
 
 // The photograph is courtesy of the U.S. Geological Survey.
- srcImage = 'https://paintball.fi/upimg/image/upimg_file/970/original';
+ srcImage = 'img/map_grit_smallest.png';
 
 
 
