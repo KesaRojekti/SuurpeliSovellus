@@ -5,6 +5,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.location.Location
+import android.media.Image
 import android.os.Bundle
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
@@ -54,7 +55,9 @@ class FragmentMapEvent: Fragment(),
             ((eventSouthWestCoordinate.longitude + eventNorthEastCoordinate.longitude) / 2f))
 
     private var listMarkersList = mutableListOf<Marker>()
-    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private val MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private lateinit var eventMapBitmap:BitmapDescriptor
+    private lateinit var eventMapGridBitmap:BitmapDescriptor
     private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
     // The childEventListener for Firebase
     private val childEventListener = object : ChildEventListener{
@@ -179,14 +182,16 @@ class FragmentMapEvent: Fragment(),
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        eventMapGridBitmap = BitmapDescriptorFactory.fromAsset("map_grit_smallest.png")
+        eventMapBitmap = BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png")
         // set the eventMap overlay from assets folder
         eventMap = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png"))
+            image(eventMapBitmap)
             positionFromBounds(eventLatLngBounds)
         })
         // set the eventMapGrid overlay from assets folder
         eventMapGrid = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("map_grit_smallest.png"))
+            image(eventMapGridBitmap)
             positionFromBounds(eventLatLngBounds)
             visible(false)
         })
@@ -208,10 +213,12 @@ class FragmentMapEvent: Fragment(),
         }else {
 
         }
+
         // set locationCallback, and DatabaseReference
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
-        // Set the initial camera settings to display eventGroundOverlay, and disable user map scroll
+        // Set the initial camera settings to display eventGroundOverlay
+        mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isScrollGesturesEnabled = false
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
         mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
@@ -288,12 +295,4 @@ class FragmentMapEvent: Fragment(),
             }
         }
     }
-
-    /*fun createLocationRequest(){
-        val locationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 10000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
-        }
-    }*/
 }

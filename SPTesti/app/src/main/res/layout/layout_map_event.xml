@@ -31,15 +31,16 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="Info: OFF"
-        app:layout_constraintTop_toBottomOf="@id/buttonEventMapGrid"
-        app:layout_constraintLeft_toRightOf="@id/mapInfo"/>
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/buttonEventMapGrid" />
 
     <ImageButton
         android:id="@+id/buttonEventMapGrid"
         android:layout_width="80dp"
         android:layout_height="80dp"
-        app:layout_constraintLeft_toRightOf="@id/mapInfo"
+        android:scaleType="fitXY"
         android:src="@drawable/gridbutton"
-        android:scaleType="fitXY"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
 
 </android.support.constraint.ConstraintLayout>
