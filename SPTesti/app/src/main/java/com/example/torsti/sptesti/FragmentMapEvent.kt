@@ -1,6 +1,7 @@
 package com.example.torsti.sptesti
 
 import android.Manifest
+import android.arch.lifecycle.Observer
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -22,6 +23,9 @@ import com.google.android.gms.maps.*
 import com.google.android.gms.maps.model.*
 import com.google.firebase.database.*
 import kotlinx.android.synthetic.main.layout_map_event.*
+import android.arch.lifecycle.ViewModelProviders
+
+
 
 
 class FragmentMapEvent: Fragment(),
@@ -59,6 +63,11 @@ class FragmentMapEvent: Fragment(),
     private lateinit var eventMapBitmap:BitmapDescriptor
     private lateinit var eventMapGridBitmap:BitmapDescriptor
     private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
+    private val locationRequest = LocationRequest().apply {
+        interval = 10000
+        fastestInterval = 10000
+        priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+    }
     // The childEventListener for Firebase
     private val childEventListener = object : ChildEventListener{
         /** The following override methods are used to update information on markers that are displayed
@@ -138,6 +147,17 @@ class FragmentMapEvent: Fragment(),
         btnEventMapInfo.setOnClickListener(this)
         mapFragment = childFragmentManager
                 .findFragmentById(R.id.map_event) as SupportMapFragment
+
+        /*val model = ViewModelProviders.of(this).get(GroundOverlayViewModel::class.java!!)
+        val mapObserver = Observer<GroundOverlayOptions> { overlay ->
+            // Update the UI, in this case, a TextView.
+            overlay?.let {
+                eventMap = overlay
+            }
+        }
+        model.getGroundOverlayOptions().observe(this, { mapObserver ->
+            // update UI
+        })*/
         // set fusedLocationClient
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this.context!!)
 
@@ -182,8 +202,8 @@ class FragmentMapEvent: Fragment(),
 
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
-        eventMapGridBitmap = BitmapDescriptorFactory.fromAsset("map_grit_smallest.png")
-        eventMapBitmap = BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png")
+        eventMapBitmap = BitmapDescriptorFactory.fromAsset("map_nogrit_smallestest.png")
+        eventMapGridBitmap = BitmapDescriptorFactory.fromAsset("map_gritonly.png")
         // set the eventMap overlay from assets folder
         eventMap = mMap.addGroundOverlay(GroundOverlayOptions().apply {
             image(eventMapBitmap)
@@ -200,11 +220,7 @@ class FragmentMapEvent: Fragment(),
 
 
         // Set the frequency and accuracy of location requests
-        val locationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 10000
-            priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-        }
+
         // check, and request access fine location permission from the user
         if (ContextCompat.checkSelfPermission(this.context!!,
                         android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -228,9 +244,12 @@ class FragmentMapEvent: Fragment(),
 
     override fun onResume() {
         super.onResume()
-
     }
 
+    override fun onStop() {
+        mMap.clear()
+        super.onStop()
+    }
     /**
      * This function is used to determine what actions will be taken in accordance to the button pressed.
      *
@@ -245,10 +264,8 @@ class FragmentMapEvent: Fragment(),
         if (btnEventMap == btnEventMapGrid) {
             if (eventMapGridOnOff) {
                 eventMapGrid.isVisible = true
-                eventMap.isVisible = false
                 eventMapGridOnOff = false
             } else {
-                eventMap.isVisible = true
                 eventMapGrid.isVisible = false
                 eventMapGridOnOff = true
             }
@@ -266,7 +283,6 @@ class FragmentMapEvent: Fragment(),
             }
         }
     }
-
     /**
      * This function is used to control the visibility and coloring of the objectives
      *
@@ -275,6 +291,7 @@ class FragmentMapEvent: Fragment(),
      * Once the first non-visible counter is found the function colors the previous marker in the list
      * as yellow (current objective)
      */
+
     fun manageObjectives(){
         if(listMarkersList.size > 0) {
             var intListIndexCounter = 0
@@ -287,7 +304,10 @@ class FragmentMapEvent: Fragment(),
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
                     listMarkersList[intListIndexCounter - 1].snippet = "Current Objective"
                     listMarkersList[intListIndexCounter - 1].showInfoWindow()
-                }else if (intListIndexCounter >= 1) {
+                } else if(intListIndexCounter == listMarkersList.size - 1){
+                    listedMarker
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                } else if (intListIndexCounter >= 1) {
                     listMarkersList[intListIndexCounter - 1]
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 }
