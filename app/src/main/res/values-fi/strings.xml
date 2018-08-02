@@ -18,6 +18,8 @@
     <string name="round_text">Erä kello:</string>
     <string name="no_game_text">Erä ohi</string>
     <string name="gametime_notification_title">Peli aikaa jäljellä:</string>
+    <string name="info_button_on">Info: ON</string>
+    <string name="info_button_off">Info: OFF</string>
 
 
     <string name="pst_title">PST-pelaaja</string>

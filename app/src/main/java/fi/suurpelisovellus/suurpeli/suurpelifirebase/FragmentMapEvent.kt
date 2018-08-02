@@ -2,11 +2,8 @@ package fi.suurpelisovellus.suurpeli.suurpelifirebase
 
 import android.Manifest
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.location.Location
 import android.os.Bundle
-import android.os.Handler
 import android.support.v4.app.ActivityCompat
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -27,7 +24,6 @@ import kotlinx.android.synthetic.main.layout_map_event.*
 class FragmentMapEvent: Fragment(),
         OnMapReadyCallback,
         View.OnClickListener {
-
 
     private lateinit var eventMap: GroundOverlay
     private lateinit var eventMapGrid: GroundOverlay
@@ -56,7 +52,9 @@ class FragmentMapEvent: Fragment(),
             ((eventSouthWestCoordinate.longitude + eventNorthEastCoordinate.longitude) / 2f))
 
     private var listMarkersList = mutableListOf<Marker>()
-    private var MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private val MY_PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION:Int = 1
+    private lateinit var eventMapBitmap:BitmapDescriptor
+    private lateinit var eventMapGridBitmap:BitmapDescriptor
     private val mDatabaseReference = FirebaseDatabase.getInstance().getReference("liput")
     // The childEventListener for Firebase
     private val childEventListener = object : ChildEventListener{
@@ -77,7 +75,7 @@ class FragmentMapEvent: Fragment(),
                 marker.tag = lippuKey
                 marker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 listMarkersList.add(marker)
-                manageObjectives()
+                colorObjectives()
             }
         }
 
@@ -95,17 +93,15 @@ class FragmentMapEvent: Fragment(),
                             listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                         }
                     }
-                    manageObjectives()
+                    colorObjectives()
                 }
             }
         }
 
         override fun onCancelled(databaseError: DatabaseError) {
-
         }
 
         override fun onChildMoved(p0: DataSnapshot, p1: String?) {
-            TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
@@ -123,7 +119,7 @@ class FragmentMapEvent: Fragment(),
                 }
 
                 listMarkersList.removeAt(indexRemoveItem)
-                manageObjectives()
+                colorObjectives()
             }
         }
     }
@@ -179,24 +175,24 @@ class FragmentMapEvent: Fragment(),
         return mView
     }
 
-
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
+        eventMapGridBitmap = BitmapDescriptorFactory.fromAsset("map_gritonly.png")
+        eventMapBitmap = BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png")
+
+
         // set the eventMap overlay from assets folder
         eventMap = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("map_nogrit_smallest.png"))
+            image(eventMapBitmap)
             positionFromBounds(eventLatLngBounds)
         })
 
         // set the eventMapGrid overlay from assets folder
         eventMapGrid = mMap.addGroundOverlay(GroundOverlayOptions().apply {
-            image(BitmapDescriptorFactory.fromAsset("map_grit_smallest.png"))
+            image(eventMapGridBitmap)
             positionFromBounds(eventLatLngBounds)
             visible(false)
         })
-
-
-
         // set the imageView by id
         eventMapInfo = mView.findViewById(R.id.mapInfo)
 
@@ -215,10 +211,12 @@ class FragmentMapEvent: Fragment(),
         }else {
 
         }
+
         // set locationCallback, and DatabaseReference
         fusedLocationClient.requestLocationUpdates(locationRequest, locationCallback, null)
         mDatabaseReference.addChildEventListener(childEventListener)
-        // Set the initial camera settings to display eventGroundOverlay, and disable user map scroll
+        // Set the initial camera settings to display eventGroundOverlay
+        mMap.uiSettings.isCompassEnabled = true
         mMap.uiSettings.isScrollGesturesEnabled = false
         mMap.setMapType(GoogleMap.MAP_TYPE_NONE)
         mMap.setLatLngBoundsForCameraTarget(eventLatLngBounds)
@@ -245,10 +243,8 @@ class FragmentMapEvent: Fragment(),
         if (btnEventMap == btnEventMapGrid) {
             if (eventMapGridOnOff) {
                 eventMapGrid.isVisible = true
-                eventMap.isVisible = false
                 eventMapGridOnOff = false
             } else {
-                eventMap.isVisible = true
                 eventMapGrid.isVisible = false
                 eventMapGridOnOff = true
             }
@@ -257,11 +253,11 @@ class FragmentMapEvent: Fragment(),
         if(btnEventMap == btnEventMapInfo){
             if(eventMapInfoOnOff){
                 mapInfo.visibility = VISIBLE
-                btnEventMapInfo.text = "Info: ON"
+                btnEventMapInfo.text = getString(R.string.info_button_on)
                 eventMapInfoOnOff = false
             } else {
                 mapInfo.visibility = GONE
-                btnEventMapInfo.text = "Info: OFF"
+                btnEventMapInfo.text = getString(R.string.info_button_off)
                 eventMapInfoOnOff = true
             }
         }
@@ -287,7 +283,15 @@ class FragmentMapEvent: Fragment(),
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
                     listMarkersList[intListIndexCounter - 1].snippet = "Current Objective"
                     listMarkersList[intListIndexCounter - 1].showInfoWindow()
-                }else if (intListIndexCounter >= 1) {
+                } else if(intListIndexCounter == listMarkersList.size - 1){
+                    listedMarker
+                            .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                    listedMarker.snippet = "Current Objective"
+                    if(intListIndexCounter >= 1){
+                        listMarkersList[intListIndexCounter-1].setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                    }
+
+                } else if (intListIndexCounter >= 1) {
                     listMarkersList[intListIndexCounter - 1]
                             .setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                 }
@@ -296,11 +300,39 @@ class FragmentMapEvent: Fragment(),
         }
     }
 
-    /*fun createLocationRequest(){
-        val locationRequest = LocationRequest().apply {
-            interval = 10000
-            fastestInterval = 10000
-            priority = LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY
+    fun colorObjectives(){
+        var i = 0
+        for(listedMarker: Marker in listMarkersList){
+            //snippet all the flags as captured, overrides will happen below
+            listedMarker.snippet = "Objective Captured"
+            //color all markers green except if it's the last true in the list
+            if(listedMarker.isVisible){
+                if(i != listMarkersList.size - 1){
+                    listedMarker.setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                }
+            }
+
+            //find first non active flag
+            if (listedMarker.isVisible == false) {
+                //if i is at least 1 (to prevent crashing) color i-1 yellow (last true flag)
+                if(i >= 1){
+                    listMarkersList[i-1].setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                    listMarkersList[i-1].snippet = "Current Objective"
+                }
+            }
+            else//no falses found? color last flag in the list yellow (listSize - 1)
+            {
+                listMarkersList[listMarkersList.size-1].setIcon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW))
+                listMarkersList[listMarkersList.size-1].snippet = "Current Objective"
+            }
+
+            i++
         }
-    }*/
+    }
+
+    override fun onStop(){
+        mMap.clear()
+        System.gc()
+        return super.onStop()
+    }
 }

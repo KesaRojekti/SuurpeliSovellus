@@ -24,6 +24,8 @@
     <string name="round_text">Round timer:</string>
     <string name="no_game_text">Round over</string>
     <string name="gametime_notification_title">Game time remaining:</string>
+    <string name="info_button_on">Info: ON</string>
+    <string name="info_button_off">Info: OFF</string>
 
 
     <!-- Settings dialog stuff -->
