@@ -26,6 +26,7 @@
     <string name="gametime_notification_title">Game time remaining:</string>
     <string name="info_button_on">Info: ON</string>
     <string name="info_button_off">Info: OFF</string>
+    <string name="game_paused_text">Round paused</string>
 
 
     <!-- Settings dialog stuff -->

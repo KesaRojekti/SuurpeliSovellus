@@ -20,6 +20,7 @@
     <string name="gametime_notification_title">Peli aikaa jäljellä:</string>
     <string name="info_button_on">Info: ON</string>
     <string name="info_button_off">Info: OFF</string>
+    <string name="game_paused_text">Erä paussilla</string>
 
 
     <string name="pst_title">PST-pelaaja</string>

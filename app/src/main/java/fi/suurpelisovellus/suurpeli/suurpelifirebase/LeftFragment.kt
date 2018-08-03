@@ -150,7 +150,7 @@ class LeftFragment : Fragment() {
             }
             //if the game is paused let users know, and don't update the timer
             else if(gamePaused){
-                timerValueText.text = "game is paused"
+                timerValueText.text = getString(R.string.game_paused_text)
             }
             else
             {
@@ -252,9 +252,19 @@ class LeftFragment : Fragment() {
         }
     }
 
+    override fun onStop(){
+        super.onStop()
+        isPaused = false
+        //remove all callbacks
+        pHandler.removeCallbacks(updatePaused)
+        mHandler.removeCallbacks(updateTimer)
+        //dismiss timer notification
+        jManager?.cancel(TimerNotificationID)
+    }
 
     override fun onDestroy() {
         super.onDestroy()
+        isPaused = false
         //remove all callbacks
         pHandler.removeCallbacks(updatePaused)
         mHandler.removeCallbacks(updateTimer)
