@@ -91,6 +91,8 @@
           timeBeforePause = new Date().getTime();
           firstPress = false
           document.getElementById("pauseButton").innerHTML = "Jatka";
+          document.getElementById("startTimerButton").disabled = true;
+          document.getElementById("pauseButton").style.backgroundColor = "green";
           //stop updating timer
           clearInterval(updater);
           //change pause to true
@@ -101,6 +103,8 @@
           firstPress = true;
           var timeNow = new Date().getTime();
           document.getElementById("pauseButton").innerHTML = "Pause";
+          document.getElementById("startTimerButton").disabled = false;
+          document.getElementById("pauseButton").style.backgroundColor = "lightblue";
           //still milliseconds
           var pausedTime = timeNow-timeBeforePause;
           //get current value in database and add pausedTime to it
@@ -150,7 +154,7 @@
     <main>
       
       <p id="timer"></p>
-      <button onclick="startTimer()">Aloita peli</button>
+      <button id="startTimerButton" onclick="startTimer()">Aloita peli</button>
       <button id="pauseButton" onclick="pauseTimer()">Pause</button>
       <button onclick="cancelTimer()">Lopeta peli</button>
       <button class="logoutButton" onclick="logout()">Kirjaudu ulos</button>
