@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".FragmentMapEvent"
+    tools:layout_editor_absoluteY="25dp">
+
+    <fragment xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map_event"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".FragmentMapEvent" />
+
+    <ImageView
+        android:id="@+id/mapInfo"
+        android:layout_width="230dp"
+        android:layout_height="match_parent"
+        android:src="@drawable/map_description_small"
+        android:scaleType="fitXY"
+        android:visibility="gone"
+        app:layout_constraintLeft_toLeftOf="parent" />
+
+    <Button
+        android:id="@+id/buttonMapInfo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:text="Info: OFF"
+        app:layout_constraintTop_toBottomOf="@id/buttonEventMapGrid"
+        app:layout_constraintLeft_toRightOf="@id/mapInfo"/>
+
+    <ImageButton
+        android:id="@+id/buttonEventMapGrid"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        app:layout_constraintLeft_toRightOf="@id/mapInfo"
+        android:src="@drawable/gridbutton"
+        android:scaleType="fitXY"/>
+
+</android.support.constraint.ConstraintLayout>
